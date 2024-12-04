@@ -45,7 +45,7 @@ class UserRegister(Resource):
 
         # Validate passwords
         if password1 != password2:
-            return {'response': 'Passwords do not match'}, 400
+            return {'response': 'Passwords do not match'}
         elif len(password1) < 6:
             return {'response': 'Password length must be more than six'}
 
