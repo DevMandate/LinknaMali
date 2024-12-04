@@ -71,7 +71,7 @@ class UserLogin(Resource):
         password = request.args.get("password")
 
         if not email or not password:
-            return {'response': 'Email and Password are required'}, 400
+            return {'response': 'Email and Password are required'}
 
         hashed_password = hashpassword(password)
 
@@ -84,10 +84,10 @@ class UserLogin(Resource):
 
         # Verification
         if cursor.rowcount == 0:
-            return {'response': 'Invalid Credentials! Please Register first'}, 401
+            return {'response': 'Invalid Credentials! Please Register first'}
         else:
             user = cursor.fetchone()
-            return {'response': f'Logged In successfully. Welcome, {user[1]}'}, 200
+            return {'response': f'Logged In successfully. Welcome, {user[1]}'}
 
 
 
