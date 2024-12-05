@@ -48,13 +48,42 @@ class UserRegister(Resource):
         # e. Execute cursor and return response
         cursor.execute(sql, data)
         connection.commit()
-        return {'response': 'User registered successfully'}
+        return jsonify ({'response': 'User registered successfully'})
 
+
+class UserLogin(Resource):
+    def get(self):
+        # a. DB Connection and Cursor
+        connection = db_connection()
+        cursor = connection.cursor()
+
+        # b. Request data
+        data = request.json 
+        email = data['email']
+        password = data['password']
+
+        # c. Sql to verify your email and password
+        sql = "select * from users where email = %s and password = %s"
+
+        # d. Execute the sql
+        hashed_password = hashpassword(password)
+        cursor.execute(sql, (email, hashed_password))
+
+        # e. Verification
+        count = cursor.rowcount
+        if count == 0:
+            return jsonify({'response':'Invalid Credentials'})
+        else:
+            user = cursor.fetchone()
+            return jsonify({
+                'response': 'Login Successful. Welcome', 'user':user
+            })
 
 
 
 # Endpoints
 api.add_resource(UserRegister, '/user_register')
+api.add_resource(UserLogin, '/user_login')
 
 
 
