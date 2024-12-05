@@ -5,6 +5,12 @@ from functions import *
 # DB Connection
 import pymysql
 import pymysql.cursors
+import jwt
+import datetime  # For token expiration
+
+# secret key 
+SECRET_KEY = "tugyw64t8739qpu9uho8579uq8htou34897r6783tiy4htg5iw795y4p0thu4o58"
+
 
 def db_connection():
     return pymysql.connect(host='localhost', user='root', password='', database='linknamali')
@@ -62,28 +68,85 @@ class UserLogin(Resource):
         email = data['email']
         password = data['password']
 
-        # c. Sql to verify your email and password
-        sql = "select * from users where email = %s and password = %s"
-
-        # d. Execute the sql
+        # c. SQL to verify email and hashed password
+        sql = "SELECT * FROM users WHERE email = %s AND password = %s"
         hashed_password = hashpassword(password)
         cursor.execute(sql, (email, hashed_password))
 
-        # e. Verification
+        # d. Verification
         count = cursor.rowcount
         if count == 0:
-            return jsonify({'response':'Invalid Credentials'})
+            return jsonify({'response': 'Invalid Credentials'})
         else:
             user = cursor.fetchone()
+
+            # Generate JWT Token
+            payload = {
+                'user_id': user[0],  # Assuming user ID is in the first column
+                'email': user[4],    # Assuming email is in the fourth column
+                'role': user[7],     # Assuming role is in the seventh column
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Token expiry
+            }
+            token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
             return jsonify({
-                'response': 'Login Successful. Welcome', 'user':user
+                'response': 'Login Successful. Welcome',
+                'token': token,
+                'user': {
+                    'id': user[0],
+                    'first_name': user[1],
+                    'last_name': user[2],
+                    'email': user[4],
+                    'role': user[7]
+                }
             })
+
+def decode_jwt(token):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        return payload
+    except jwt.ExpiredSignatureError:
+        return {'error': 'Token has expired'}
+    except jwt.InvalidTokenError:
+        return {'error': 'Invalid token'}
+    
+
+def token_required(f):
+    def wrapper(*args, **kwargs):
+        token = request.headers.get('Authorization')  # Expecting 'Bearer <token>'
+        if not token:
+            return jsonify({'response': 'Token is missing'}), 401
+
+        try:
+            token = token.split(" ")[1]  # Remove "Bearer" from the header
+            payload = decode_jwt(token)
+            if 'error' in payload:
+                return jsonify({'response': payload['error']}), 401
+        except Exception as e:
+            return jsonify({'response': 'Token is invalid'}), 401
+
+        return f(payload, *args, **kwargs)
+    return wrapper
+
+
+
+
+class ProtectedResource(Resource):
+    @token_required
+    def get(self, payload):
+        return jsonify({'response': 'Access granted', 'user': payload})
+
+
+
+
 
 
 
 # Endpoints
 api.add_resource(UserRegister, '/user_register')
 api.add_resource(UserLogin, '/user_login')
+api.add_resource(ProtectedResource, '/protected')
+
 
 
 
