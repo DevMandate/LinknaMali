@@ -1,6 +1,8 @@
 :root{
     --dark-Theme: #000000;
     --light-Theme: #ffffff;
+    --hamburger-dark: #222222;
+    --hamburger-light: #EDEDED;
 }
 body{
     transition: background-color 0.5s, color 0.5s;
@@ -9,13 +11,15 @@ body{
 body[data-theme='light'] {
     background-color: var(--light-Theme);
     color: var(--dark-Theme);
-    --background-theme-invert: var(--dark-Theme);
-    --text-theme-inverter: var(--light-Theme);  
+    --background-invert: var(--dark-Theme);
+    --text-inverter: var(--light-Theme);  
+    --hamburger: var(--hamburger-light)
 }
 
 body[data-theme='dark']{
     background-color: var(--dark-Theme);
     color: var(--light-Theme);
-    --background-theme-invert: var(--light-Theme);
-    --text-theme-inverter: var(--dark-Theme); 
+    --background-invert: var(--light-Theme);
+    --text-inverter: var(--dark-Theme); 
+    --hamburger: var(--hamburger-dark)
 }

@@ -1,4 +1,4 @@
-ul {
+.nav-bar ul {
     display: flex;
     gap: 2rem;
 }
@@ -15,40 +15,19 @@ ul {
     left: 0;
     height: 2px;
     width: 0;
-    background-color: var(--background-theme-invert);
-    transition: width 0.3s ease;
+    background-color: var(--background-invert);
+    transition: width 0.5s ease;
 }
 .nav-item:hover::after {
     width: 100%;
 }
 
-/*Hamburger Menu*/
-.hamburger-menu {
-    display: none;
-    cursor: pointer;
-}
-.bar {
-    height: 2px;
-    margin: 3px 0;
-    background-color: red;
-    transition: transform 0.3s, opacity 0.3s;
-}
-.bar:nth-child(1){
-    width: 25px;
-}
-.bar:nth-child(2){
-    width: 20px;
-}
-.bar:nth-child(3){
-    width: 15px;
-}
-
-
 @media (max-width: 1000px) {
-    .hamburger-menu{
-        display: flex;
+    .nav-bar ul{
+        flex-direction: column;
     }
-    .header-nav{
-        display: none;
+    .nav-item:hover::after {
+        width: 100px;
     }
+    
 }
