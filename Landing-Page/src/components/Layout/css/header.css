@@ -16,7 +16,7 @@
     height: 2px;
     width: 0;
     background-color: var(--background-invert);
-    transition: width 0.5s ease;
+    transition: width 0.3s ease;
 }
 .nav-item:hover::after {
     width: 100%;
@@ -25,6 +25,9 @@
 @media (max-width: 1000px) {
     .nav-bar ul{
         flex-direction: column;
+    }
+    .nav-item{
+        max-width: 200px;
     }
     .nav-item:hover::after {
         width: 100px;
