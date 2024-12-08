@@ -1,0 +1,23 @@
+ul {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-item {
+    position: relative;
+    cursor: pointer;
+}
+
+.nav-item::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background-color: var(--background-theme-invert);
+    transition: width 0.3s ease;
+}
+.nav-item:hover::after {
+    width: 100%;
+}
