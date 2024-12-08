@@ -1,0 +1,10 @@
+:root{
+    /***Dark colors***/
+    --color-black: black;
+    --color-black-light:#090909;
+
+    /***Light colors***/
+    --color-white:#ffffff;
+    --color-white-light:#f5f5f5;
+} 
+
