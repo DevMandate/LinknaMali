@@ -9,7 +9,7 @@ function Header() {
     const navItems = ["Home", "Property Listing", "Rentals", "About Us"];
 
     return (
-        <Box className='flex justify-between items-center'>
+        <Box className='flex justify-between items-center w-[100%]'>
 
             {/**Link na Mali Logo */}
             <img className="w-[100px]" src={LinknaMali} title="Link na Mali" alt="Link na Mali"/>
