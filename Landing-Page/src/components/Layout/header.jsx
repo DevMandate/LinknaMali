@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import { Link } from "react-scroll";
 import { Box, Button, Container } from "@mui/material";
 import { useMediaQuery } from "@mui/material";
 import {ThemeMuiSwitch} from '../Common/Switch'
@@ -49,7 +50,7 @@ function Buttons() {
 
 function Nav({isMobile}) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const navItems = ["Home", "Property Listing", "Rentals", "About Us"];
+    const navItems = ["Home", "Property", "Rentals", "About"];
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
@@ -57,7 +58,7 @@ function Nav({isMobile}) {
 
     return(
         <>
-            <div className="hamburger-menu flex-col" onClick={toggleMenu}>
+            <div className={`hamburger-menu flex-col ${menuOpen ? 'cross' : ''}`} onClick={toggleMenu}>
                 <div className="bar"></div>
                 <div className="bar"></div>
                 <div className="bar"></div>
@@ -68,7 +69,14 @@ function Nav({isMobile}) {
                         <Logo size={50}/>
                     )}
                     {navItems.map((item, index) => (
-                        <li className="nav-item" key={index}>{item}</li>
+                        <li className="nav-item" key={index}>
+                            <Link 
+                                to={item.toLowerCase()} 
+                                smooth={true} 
+                                duration={500}
+                            >{item}
+                            </Link>
+                        </li>
                     ))}  
                     {isMobile &&(
                         <Buttons />
