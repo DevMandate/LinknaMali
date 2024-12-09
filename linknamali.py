@@ -8,6 +8,7 @@ import pymysql.cursors
 import jwt
 import datetime  # For token expiration
 
+
 # secret key 
 SECRET_KEY = "tugyw64t8739qpu9uho8579uq8htou34897r6783tiy4htg5iw795y4p0thu4o58"
 
@@ -92,7 +93,7 @@ class UserLogin(Resource):
             return jsonify({
                 'response': 'Login Successful. Welcome',
                 'token': token,
-                'user': {
+                'last_name': {
                     'id': user[0],
                     'first_name': user[1],
                     'last_name': user[2],
@@ -100,6 +101,7 @@ class UserLogin(Resource):
                     'role': user[7]
                 }
             })
+        
 
 def decode_jwt(token):
     try:
@@ -138,7 +140,105 @@ class ProtectedResource(Resource):
 
 
 
+# Retrieve Properties
+class GetProperty(Resource):
+    def post(self):  # Change to POST if using JSON input
+        # Step 1: Get the input JSON body
+        data = request.get_json()
+        property_id = data.get('property_id')  # Extract property_id from the JSON body
+        
+        # Step 2: DB Connection and Cursor
+        connection = db_connection()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+        
+        # Step 3: Construct and execute SQL query
+        if property_id:
+            sql = "SELECT * FROM properties WHERE property_id = %s"
+            cursor.execute(sql, (property_id,))
+        else:
+            return jsonify({"message": "Property ID is required"})
+        
+        # Step 4: Check if any records exist
+        if cursor.rowcount == 0:
+            return jsonify({"message": "No records found"})
+        else:
+            property_details = cursor.fetchone()
+            return jsonify(property_details)
 
+
+
+# Add Property API
+class AddProperty(Resource):
+    def post(self):
+        try:
+            # Step 1: Parse the request JSON data
+            data = request.get_json()
+            
+            # Extract property fields
+            owner_id = data.get('owner_id')
+            title = data.get('title')
+            description = data.get('description')
+            location = data.get('location')
+            price = data.get('price')
+            property_type = data.get('property_type')
+            availability_status = data.get('availability_status', 'available')  # Default to 'available'
+
+            # Validate required fields
+            if not all([owner_id, title, location, price, property_type]):
+                return jsonify({"message": "Missing required fields. Please include owner_id, title, location, price, and property_type."})
+
+            # Step 2: DB Connection and Cursor
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Step 3: Insert SQL Query
+            sql = """
+                INSERT INTO properties (owner_id, title, description, location, price, property_type, availability_status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (owner_id, title, description, location, price, property_type, availability_status)
+
+            # Execute the query
+            cursor.execute(sql, values)
+            connection.commit()
+
+            # Step 4: Response
+            return jsonify({"message": "Property added successfully", "property_id": cursor.lastrowid})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while adding the property", "error": str(e)})
+        finally:
+            # Step 5: Close DB Connection
+            if connection:
+                cursor.close()
+                connection.close()
+
+
+class GetPropertiesByType(Resource):
+    def post(self):
+        # Step 1: Get the input JSON body (expects the property_type field)
+        data = request.get_json()
+        property_type = data.get('property_type')
+
+        # Step 2: Validate the input
+        if not property_type:
+            return jsonify({"message": "Property type is required"})
+
+        # Step 3: DB Connection and Cursor
+        connection = db_connection()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+        # Step 4: Construct and execute SQL query to get properties based on the type
+        sql = "SELECT * FROM properties WHERE property_type = %s"
+        cursor.execute(sql, (property_type,))
+        
+        # Step 5: Check if any records exist
+        properties = cursor.fetchall()
+        if len(properties) == 0:
+            return jsonify({"message": "No properties found for the given type"})
+
+        # Step 6: Return the properties as a JSON response
+        return jsonify({"properties": properties})
 
 
 
@@ -146,6 +246,10 @@ class ProtectedResource(Resource):
 api.add_resource(UserRegister, '/user_register')
 api.add_resource(UserLogin, '/user_login')
 api.add_resource(ProtectedResource, '/protected')
+api.add_resource(GetProperty, '/get_property')
+api.add_resource(AddProperty, '/add_property')
+api.add_resource(GetPropertiesByType, '/get_properties_by_type')
+
 
 
 
