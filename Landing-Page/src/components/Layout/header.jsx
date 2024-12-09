@@ -66,7 +66,7 @@ function Nav({isMobile}) {
             <Container maxWidth='sm' className={`nav-bar ${menuOpen ? 'active' : ''}`}>
                 <ul> 
                     {isMobile &&(
-                        <Logo size={50}/>
+                        <Logo size={100}/>
                     )}
                     {navItems.map((item, index) => (
                         <li className="nav-item" key={index}>
@@ -89,7 +89,7 @@ function Nav({isMobile}) {
 
 function Logo({size}){
     return(
-        <img className={`w-[100px]`} src={LinknaMali} title="Link na Mali" alt="LinknaMali Logo"/>
+        <img className={`w-[${size}px]`} src={LinknaMali} title="Link na Mali" alt="LinknaMali Logo"/>
     )
 }
 
