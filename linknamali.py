@@ -214,6 +214,7 @@ class AddProperty(Resource):
                 connection.close()
 
 
+# Retrieve Property by Type
 class GetPropertiesByType(Resource):
     def post(self):
         # Step 1: Get the input JSON body (expects the property_type field)
@@ -241,6 +242,67 @@ class GetPropertiesByType(Resource):
         return jsonify({"properties": properties})
 
 
+# Retrieve property by Amenity
+class GetPropertyWithAmenity(Resource):
+    def post(self):  # Change to POST if using JSON input
+        # Step 1: Get the input JSON body
+        data = request.get_json()
+        amenity_name = data.get('amenity_name')  # Extract amenity_name from the JSON body
+        
+        if not amenity_name:
+            return jsonify({"message": "Amenity name is required"})
+        
+        # Step 2: DB Connection and Cursor
+        connection = db_connection()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+        
+        try:
+            # Step 3: Construct and execute SQL query
+            sql = """
+                SELECT a.amenity_name, a.amenity_category, a.amenity_description, p.*
+                FROM amenities a
+                JOIN property_specific_amenities psa ON psa.amenity_id = a.amenity_id
+                JOIN properties p ON psa.property_id = p.property_id
+                WHERE a.amenity_name = %s
+            """
+            cursor.execute(sql, (amenity_name,))
+            
+            # Step 4: Check if any records exist
+            if cursor.rowcount == 0:
+                return jsonify({"message": "No properties found with the requested amenity"})
+            else:
+                # Fetch the result
+                result = cursor.fetchall()
+                
+                # Combine amenity and property details into one response
+                properties_with_amenity = []
+                for row in result:
+                    properties_with_amenity.append({
+                        'property_id': row['property_id'],
+                        'owner_id': row['owner_id'],
+                        'title': row['title'],
+                        'description': row['description'],
+                        'location': row['location'],
+                        'price': row['price'],
+                        'property_type': row['property_type'],
+                        'availability_status': row['availability_status'],
+                        'amenity_name': row['amenity_name'],
+                        'amenity_category': row['amenity_category'],
+                        'amenity_description': row['amenity_description']
+                    })
+                return jsonify(properties_with_amenity)
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred", "error": str(e)})
+
+        finally:
+            # Step 5: Close DB Connection
+            if connection:
+                cursor.close()
+                connection.close()
+
+
+
 
 # Endpoints
 api.add_resource(UserRegister, '/user_register')
@@ -249,7 +311,7 @@ api.add_resource(ProtectedResource, '/protected')
 api.add_resource(GetProperty, '/get_property')
 api.add_resource(AddProperty, '/add_property')
 api.add_resource(GetPropertiesByType, '/get_properties_by_type')
-
+api.add_resource(GetPropertyWithAmenity, '/properties/amenity')
 
 
 
