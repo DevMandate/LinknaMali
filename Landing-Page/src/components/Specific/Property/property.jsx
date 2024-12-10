@@ -8,7 +8,7 @@ function Hero() {
             className=''
             sx={{
                 minHeight:'300px',
-                backgroundColor:'#CFD3D6'
+                backgroundColor:'var(--color-merime)'
             }}
         >
            

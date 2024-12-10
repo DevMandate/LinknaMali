@@ -7,10 +7,17 @@ function Heading() {
         <Box
             sx={{padding:2}}
         >
-            <Typography variant="h2" fontWeight={400}>
+            <Typography 
+                variant="h2" 
+                fontWeight={400}
+                color="white"
+            >
                 Transforming Real Estate in Kenya
             </Typography>
-            <Typography variant="h3">
+            <Typography 
+                variant="h3"
+                color="white"
+            >
                 Seamless, secure and Smart
             </Typography>
         </Box>

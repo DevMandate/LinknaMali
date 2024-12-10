@@ -21,11 +21,14 @@ function Buttons() {
             <ThemeMuiSwitch toggleTheme={toggleTheme} checked={theme === 'dark'} />
             <Button
                 sx={{
-                    color:'inherit',
+                    color:'white',
                     transition: 'color 0.5s ease',
                     "&:hover": {
-                        color: "#1976d2"
-                    }
+                        color: "#EDEDED"
+                    },
+                    '@media (max-width: 1000px)': {
+                        color: 'inherit',
+                    },
                 }}
             >Log In</Button>
             <Button
@@ -44,13 +47,29 @@ function Buttons() {
                     }
                 }}
             >Sign Up</Button>
+            <Button
+                variant="contained"
+                sx={{
+                    marginLeft:'20px',
+                    marginRight:'10px',
+                    backgroundColor:'red',
+                    transition: 'background-color 0.5s ease',
+                    "&:hover": {
+                        backgroundColor: "#FF0000"
+                    },
+                    '@media (max-width: 380px)': {
+                        marginLeft:'0px',
+                        marginRight:'0px',
+                    }
+                }}
+            >Create Listing</Button>
         </Box>
     );
 }
 
 function Nav({isMobile}) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const navItems = ["Home", "Property", "Rentals", "About"];
+    const navItems = ["Home", "Property", "Services", "About"];
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);

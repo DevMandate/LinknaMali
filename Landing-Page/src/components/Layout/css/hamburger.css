@@ -8,7 +8,7 @@
 .bar {
     height: 2px;
     margin: 3px 0;
-    background-color: var(--background-invert);
+    background-color: var(--color-white);
     transition: transform 0.3s, opacity 0.3s;
 }
 .bar:nth-child(1){

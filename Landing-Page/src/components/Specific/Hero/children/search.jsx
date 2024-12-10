@@ -9,12 +9,14 @@ function Search() {
     return(
         <Container
             className=''
-            maxWidth='md'
-            sx={{backgroundColor:'#CFD3D6', 
+            maxWidth=''
+            sx={{backgroundColor:'var(--color-merime)', 
                 display: 'flex',
                 flexDirection:'column',
                 alignItems:'center',
-                padding: 2,
+                paddingTop: 2,
+                marginTop:'80px',
+                maxWidth:'710px',
                 borderTopLeftRadius: '5px',
                 borderTopRightRadius: '5px',
                 '@media (max-width: 900px)': {

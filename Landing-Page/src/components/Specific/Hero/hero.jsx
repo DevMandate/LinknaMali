@@ -3,14 +3,14 @@ import { Box, Button, Container } from "@mui/material";
 import Header from '../../Layout/header';
 import Heading from './children/heading'
 import Search from './children/search'
-
+import './css/hero.css'
 function Hero() {
 
     return(
         <Box
-            className=''
+            className='Hero'
             sx={{
-                minHeight:'300px'
+                minHeight:'500px'
             }}
         >
             <Header />
