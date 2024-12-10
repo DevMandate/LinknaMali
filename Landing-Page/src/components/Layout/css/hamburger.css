@@ -27,6 +27,7 @@
     }
     .nav-bar {
         position: absolute;
+        z-index: 2;
         top: 0%;
         width: calc( 100% - 50px) !important;
         height: 100vh;
