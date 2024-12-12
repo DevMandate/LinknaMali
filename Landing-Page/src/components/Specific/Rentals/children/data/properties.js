@@ -25,7 +25,7 @@ const properties = [
     ownerImage: owner1,
     parking: 2,
     bathrooms: 2,
-    likes: Math.floor(Math.random() * 101), // Random likes between 0 and 100
+    likes: Math.floor(Math.random() * 101),
   },
   {
     id: 2,
