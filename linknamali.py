@@ -1,6 +1,7 @@
 from flask import *
 from flask_restful import Api, Resource
 from functions import *
+from flask_cors import CORS
 
 # DB Connection
 import pymysql
@@ -19,6 +20,7 @@ def db_connection():
 # starts
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 # 1. USER REGISTER
 class UserRegister(Resource):
@@ -302,6 +304,143 @@ class GetPropertyWithAmenity(Resource):
                 connection.close()
 
 
+class DeleteProperty(Resource):
+    def delete(self):
+        try:
+            # Step 1: Parse the request JSON data
+            data = request.get_json()
+
+            # Extract property_id from the request
+            property_id = data.get('property_id')
+
+            # Validate the input
+            if not property_id:
+                return {"message": "Property ID is required"}, 400
+
+            # Step 2: DB Connection and Cursor
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Step 3: Delete SQL Query
+            sql = "DELETE FROM properties WHERE property_id = %s"
+
+            # Execute the query
+            cursor.execute(sql, (property_id,))
+            connection.commit()
+
+            # Check if any rows were affected
+            if cursor.rowcount == 0:
+                return {"message": "No property found with the provided ID"}, 404
+
+            # Step 4: Success Response
+            return {"message": f"Property with ID {property_id} has been deleted successfully"}, 200
+
+        except Exception as e:
+            return {"message": "An error occurred", "error": str(e)}, 500
+
+        finally:
+            # Step 5: Close DB Connection
+            if connection:
+                cursor.close()
+                connection.close()
+
+
+
+
+class SaveToFavorites(Resource):
+    def post(self):
+        # Step 1: Get the input JSON body (expects user_id, property_id, and/or amenity_id)
+        data = request.get_json()
+        user_id = data.get('user_id')
+        property_id = data.get('property_id')  # Optional, for saving a property to favorites
+        amenity_id = data.get('amenity_id')    # Optional, for saving an amenity to favorites
+
+        # Step 2: Validate the input
+        if not user_id:
+            return jsonify({"message": "User ID is required"})
+        
+        if not (property_id or amenity_id):
+            return jsonify({"message": "Either property_id or amenity_id is required"})
+
+        # Step 3: DB Connection and Cursor
+        connection = db_connection()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+        try:
+            # Step 4: Check if property or amenity already exists in favorites
+            if property_id:
+                cursor.execute("SELECT * FROM favorites WHERE user_id = %s AND property_id = %s", (user_id, property_id))
+                existing_favorite = cursor.fetchone()
+                if existing_favorite:
+                    return jsonify({"message": "This property is already in your favorites"})
+
+                # Add property to favorites
+                cursor.execute("INSERT INTO favorites (user_id, property_id) VALUES (%s, %s)", (user_id, property_id))
+            
+            if amenity_id:
+                cursor.execute("SELECT * FROM favorites WHERE user_id = %s AND amenity_id = %s", (user_id, amenity_id))
+                existing_favorite = cursor.fetchone()
+                if existing_favorite:
+                    return jsonify({"message": "This amenity is already in your favorites"})
+
+                # Add amenity to favorites
+                cursor.execute("INSERT INTO favorites (user_id, amenity_id) VALUES (%s, %s)", (user_id, amenity_id))
+
+            # Step 5: Commit changes and return success message
+            connection.commit()
+
+            return jsonify({"message": "Successfully added to favorites"})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred", "error": str(e)})
+
+        finally:
+            # Step 6: Close DB Connection
+            if connection:
+                cursor.close()
+                connection.close()
+
+
+class GetFavorites(Resource):
+    def post(self):
+        # Step 1: Get the input JSON body (expects user_id)
+        data = request.get_json()
+        user_id = data.get('user_id')
+
+        # Step 2: Validate the input
+        if not user_id:
+            return jsonify({"message": "User ID is required"})
+
+        # Step 3: DB Connection and Cursor
+        connection = db_connection()
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+        try:
+            # Step 4: Retrieve user's favorites (both properties and amenities)
+            cursor.execute("""
+                SELECT f.favorite_id, f.created_at, p.title AS property_title, a.amenity_name
+                FROM favorites f
+                LEFT JOIN properties p ON f.property_id = p.property_id
+                LEFT JOIN amenities a ON f.amenity_id = a.amenity_id
+                WHERE f.user_id = %s
+            """, (user_id,))
+            favorites = cursor.fetchall()
+
+            if not favorites:
+                return jsonify({"message": "No favorites found for the user"})
+
+            return jsonify({"favorites": favorites})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred", "error": str(e)})
+
+        finally:
+            # Step 5: Close DB Connection
+            if connection:
+                cursor.close()
+                connection.close()
+
+
 
 
 # Endpoints
@@ -312,6 +451,10 @@ api.add_resource(GetProperty, '/get_property')
 api.add_resource(AddProperty, '/add_property')
 api.add_resource(GetPropertiesByType, '/get_properties_by_type')
 api.add_resource(GetPropertyWithAmenity, '/properties/amenity')
+api.add_resource(DeleteProperty, '/delete_property')
+api.add_resource(SaveToFavorites, '/savetofavourites')
+api.add_resource(GetFavorites, '/getfavorites')
+
 
 
 
