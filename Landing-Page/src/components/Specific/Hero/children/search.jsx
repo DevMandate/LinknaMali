@@ -6,6 +6,9 @@ import PriceRange from '../../../Common/select/PriceRange'
 import Options from '../../../Common/select/Options'
 
 function Search() {
+    const handleSearch = () => {
+        alert(`Search triggered with query`);
+    };
     return(
         <Container
             className=''
@@ -31,9 +34,10 @@ function Search() {
                 <CheckMarks />
                 <PriceRange />
                 <Button
+                    onClick={handleSearch}
                     variant="contained"
                     sx={{width:100,
-                    backgroundColor:'#22275E',
+                    backgroundColor:'var(--button-merime)',
                     transition: 'background-color 0.5s ease',
                     "&:hover": {
                         backgroundColor: "#343A85"
