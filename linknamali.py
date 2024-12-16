@@ -2,12 +2,18 @@ from flask import *
 from flask_restful import Api, Resource
 from functions import *
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
+from propertymgt import *
+
+
 
 # DB Connection
 import pymysql
 import pymysql.cursors
 import jwt
 import datetime  # For token expiration
+import os
+
 
 
 # secret key 
@@ -441,6 +447,598 @@ class GetFavorites(Resource):
                 connection.close()
 
 
+# Add Apartment Route
+
+# Set the path to the images folder inside the static directory
+app.config['UPLOAD_FOLDER'] = 'static/images'
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+
+# Function to check allowed file extensions for images
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+# Add Apartment API
+UPLOAD_FOLDER = "static/images/"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+class AddApartment(Resource):
+    def post(self):
+        try:
+            # Ensure the images folder exists
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+
+            # Parse form data
+            if "image" not in request.files:
+                return jsonify({"message": "Image file is required."})
+
+            image = request.files["image"]
+
+            if not allowed_file(image.filename):
+                return jsonify({"message": "Invalid file type. Allowed types are png, jpg, jpeg, gif."})
+
+            # Secure the filename
+            filename = secure_filename(image.filename)
+
+            # Save the file to the static/images folder
+            image.save(os.path.join(UPLOAD_FOLDER, filename))
+
+            # Extract other fields
+            user_id = request.form.get("user_id")
+            title = request.form.get("title")
+            description = request.form.get("description")
+            location = request.form.get("location")
+            price = request.form.get("price")
+            floor_number = request.form.get("floor_number")
+            number_of_bedrooms = request.form.get("number_of_bedrooms")
+            number_of_bathrooms = request.form.get("number_of_bathrooms")
+            furnished = request.form.get("furnished")
+            balcony = request.form.get("balcony")
+            parking = request.form.get("parking")
+
+            # Validate required fields
+            if not all([user_id, title, floor_number, number_of_bedrooms, number_of_bathrooms, furnished, balcony, parking]):
+                return jsonify({"message": "Missing required fields. Please include property_id, title, floor_number, number_of_bedrooms, number_of_bathrooms, furnished, balcony, and parking."})
+
+            # DB connection
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Insert data into the database
+            sql = """
+                INSERT INTO apartments (user_id, title, description, location, price, floor_number, number_of_bedrooms, number_of_bathrooms, furnished, balcony, parking, image)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (user_id, title, description, location, price, floor_number, number_of_bedrooms, number_of_bathrooms, furnished, balcony, parking, filename)
+            cursor.execute(sql, values)
+            connection.commit()
+
+            # Response
+            return jsonify({"message": "Apartment added successfully", "apartment_id": cursor.lastrowid})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while adding the apartment", "error": str(e)})
+
+        finally:
+            # Close the DB connection
+            if connection:
+                cursor.close()
+                connection.close()
+
+
+            # Close the DB connection if it exists
+            if connection:
+                connection.close()
+
+
+
+# Get Apartment Api
+class GetApartment(Resource):
+    def get(self):
+        connection = None
+        cursor = None
+
+        try:
+            # Extract query parameters
+            user_id = request.args.get("user_id")
+            title = request.args.get("title")
+            location = request.args.get("location")
+            min_price = request.args.get("min_price")
+            max_price = request.args.get("max_price")
+            number_of_bedrooms = request.args.get("number_of_bedrooms")
+
+            # Build the base SQL query
+            sql = "SELECT * FROM apartments WHERE 1=1"
+            values = []
+
+            # Add filters based on available query parameters
+            if user_id:
+                sql += " AND user_id = %s"
+                values.append(user_id)
+
+            if title:
+                sql += " AND title LIKE %s"
+                values.append(f"%{title}%")
+
+            if location:
+                sql += " AND location LIKE %s"
+                values.append(f"%{location}%")
+
+            if min_price and max_price:
+                sql += " AND CAST(price AS UNSIGNED) BETWEEN %s AND %s"
+                values.extend([min_price, max_price])
+            elif min_price:
+                sql += " AND CAST(price AS UNSIGNED) >= %s"
+                values.append(min_price)
+            elif max_price:
+                sql += " AND CAST(price AS UNSIGNED) <= %s"
+                values.append(max_price)
+
+            if number_of_bedrooms:
+                sql += " AND number_of_bedrooms = %s"
+                values.append(number_of_bedrooms)
+
+            # DB connection
+            connection = db_connection()
+            if connection is None:
+                raise Exception("Database connection failed")  # Handle missing DB connection
+
+            cursor = connection.cursor()  # Remove dictionary=True here
+
+            # Execute the query
+            cursor.execute(sql, values)
+            rows = cursor.fetchall()
+
+            # Convert rows to dictionary
+            columns = [col[0] for col in cursor.description]  # Get column names
+            apartments = [dict(zip(columns, row)) for row in rows]
+
+            # Response
+            return jsonify({"message": "Success", "data": apartments})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while fetching apartments", "error": str(e)})
+
+        finally:
+            # Close the cursor if it exists
+            if cursor:
+                cursor.close()
+
+            # Close the DB connection if it exists
+            if connection:
+                connection.close()
+
+
+
+
+# Add House Route
+class AddHouse(Resource):
+    def post(self):
+        try:
+            # Ensure the images folder exists
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+
+            # Parse form data
+            if "image" not in request.files:
+                return jsonify({"message": "Image file is required."})
+
+            image = request.files["image"]
+
+            if not allowed_file(image.filename):
+                return jsonify({"message": "Invalid file type. Allowed types are png, jpg, jpeg, gif."})
+
+            # Secure the filename
+            filename = secure_filename(image.filename)
+
+            # Save the file to the static/images folder
+            image.save(os.path.join(UPLOAD_FOLDER, filename))
+
+            # Extract other fields
+            user_id = request.form.get("user_id")
+            title = request.form.get("title")
+            description = request.form.get("description")
+            number_of_bedrooms = request.form.get("number_of_bedrooms")
+            number_of_bathrooms = request.form.get("number_of_bathrooms")
+            furnished = request.form.get("furnished")
+            balcony = request.form.get("balcony")
+            parking = request.form.get("parking")
+            garden = request.form.get("garden")
+            swimming_pool = request.form.get("swimming_pool")
+            location = request.form.get("location")
+            price = request.form.get("price")
+            size_in_acres = request.form.get("size_in_acres")
+            additional_amenities = request.form.get("additional_amenities")
+
+            # Validate required fields
+            if not all([
+                user_id, title, number_of_bedrooms, number_of_bathrooms, furnished, 
+                balcony, parking, garden, swimming_pool, location, size_in_acres
+            ]):
+                return jsonify({"message": "Missing required fields. Please include all required fields."})
+
+            # DB connection
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Insert data into the database
+            sql = """
+                INSERT INTO houses (
+                    user_id, title, description, number_of_bedrooms, number_of_bathrooms, 
+                    furnished, balcony, parking, garden, swimming_pool, image, 
+                    location, price, size_in_acres, additional_amenities
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (
+                user_id, title, description, number_of_bedrooms, number_of_bathrooms, 
+                furnished, balcony, parking, garden, swimming_pool, filename, 
+                location, price, size_in_acres, additional_amenities
+            )
+            cursor.execute(sql, values)
+            connection.commit()
+
+            # Response
+            return jsonify({"message": "House added successfully", "house_id": cursor.lastrowid})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while adding the house", "error": str(e)})
+
+        finally:
+            # Close the DB connection
+            if connection:
+                cursor.close()
+                connection.close()
+
+
+# Get HSE class
+class GetHouse(Resource):
+    def get(self):
+        connection = None
+        cursor = None
+
+        try:
+            # Extract query parameters
+            user_id = request.args.get("user_id")
+            location = request.args.get("location")
+            number_of_bedrooms = request.args.get("number_of_bedrooms")
+            min_price = request.args.get("min_price")
+            max_price = request.args.get("max_price")
+            additional_amenities = request.args.get("additional_amenities")
+
+            # Build the base SQL query
+            sql = "SELECT * FROM houses WHERE 1=1"
+            values = []
+
+            # Add filters based on available query parameters
+            if user_id:
+                sql += " AND user_id = %s"
+                values.append(user_id)
+
+            if location:
+                sql += " AND location LIKE %s"
+                values.append(f"%{location}%")
+
+            if number_of_bedrooms:
+                sql += " AND number_of_bedrooms = %s"
+                values.append(number_of_bedrooms)
+
+            if min_price and max_price:
+                sql += " AND CAST(price AS UNSIGNED) BETWEEN %s AND %s"
+                values.extend([min_price, max_price])
+            elif min_price:
+                sql += " AND CAST(price AS UNSIGNED) >= %s"
+                values.append(min_price)
+            elif max_price:
+                sql += " AND CAST(price AS UNSIGNED) <= %s"
+                values.append(max_price)
+
+            if additional_amenities:
+                sql += " AND additional_amenities LIKE %s"
+                values.append(f"%{additional_amenities}%")
+
+            # DB connection
+            connection = db_connection()
+            if connection is None:
+                raise Exception("Database connection failed")  # Handle missing DB connection
+
+            cursor = connection.cursor()  # Remove dictionary=True here
+
+            # Execute the query
+            cursor.execute(sql, values)
+            rows = cursor.fetchall()
+
+            # Convert rows to dictionary
+            columns = [col[0] for col in cursor.description]  # Get column names
+            houses = [dict(zip(columns, row)) for row in rows]
+
+            # Response
+            return jsonify({"message": "Success", "data": houses})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while fetching houses", "error": str(e)})
+
+        finally:
+            # Close the cursor if it exists
+            if cursor:
+                cursor.close()
+
+            # Close the DB connection if it exists
+            if connection:
+                connection.close()
+
+
+# Add Land route
+class AddLand(Resource):
+    def post(self):
+        # Extract other fields
+        user_id = request.form.get("user_id")
+        title = request.form.get("title")
+        description = request.form.get("description")
+        land_size = request.form.get("land_size")
+        land_type = request.form.get("land_type")
+        location = request.form.get("location")
+        price = request.form.get("price")
+        zoning_status = request.form.get("zoning_status", "un-zoned")
+        utilities_available = request.form.get("utilities_available", "No")
+        land_access = request.form.get("land_access", "good")
+        
+        # Handle image upload
+        image = request.files.get("image")
+        
+        if image:
+            # Ensure the image is saved to the correct directory
+            image_filename = os.path.join("static/images", image.filename)
+            image.save(image_filename)
+        else:
+            return jsonify({"message": "Missing image file."})
+
+        # Validate required fields
+        if not all([user_id, title, land_size, land_type, location, price]):
+            return jsonify({"message": "Missing required fields. Please include user_id, title, land_size, land_type, location, and price."})
+
+        # DB connection
+        connection = db_connection()
+        cursor = connection.cursor()
+
+        # Insert data into the database
+        sql = """
+            INSERT INTO land (user_id, title, description, land_size, land_type, location, price, zoning_status, utilities_available, land_access, image)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        values = (user_id, title, description, land_size, land_type, location, price, zoning_status, utilities_available, land_access, image.filename)
+        cursor.execute(sql, values)
+        connection.commit()
+
+        # Close cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Response
+        return jsonify({"message": "Land added successfully", "land_id": cursor.lastrowid})
+
+
+# Get land route
+class GetLand(Resource):
+    def get(self):
+        connection = None
+        cursor = None
+
+        try:
+            # Extract query parameters
+            user_id = request.args.get("user_id")
+            title = request.args.get("title")
+            location = request.args.get("location")
+            min_price = request.args.get("min_price")
+            max_price = request.args.get("max_price")
+            land_size = request.args.get("land_size")
+            land_type = request.args.get("land_type")
+
+            # Build the base SQL query
+            sql = "SELECT * FROM land WHERE 1=1"
+            values = []
+
+            # Add filters based on available query parameters
+            if user_id:
+                sql += " AND user_id = %s"
+                values.append(user_id)
+
+            if title:
+                sql += " AND title LIKE %s"
+                values.append(f"%{title}%")
+
+            if location:
+                sql += " AND location LIKE %s"
+                values.append(f"%{location}%")
+
+            if min_price and max_price:
+                sql += " AND CAST(price AS UNSIGNED) BETWEEN %s AND %s"
+                values.extend([min_price, max_price])
+            elif min_price:
+                sql += " AND CAST(price AS UNSIGNED) >= %s"
+                values.append(min_price)
+            elif max_price:
+                sql += " AND CAST(price AS UNSIGNED) <= %s"
+                values.append(max_price)
+
+            if land_size:
+                sql += " AND land_size LIKE %s"
+                values.append(f"%{land_size}%")
+
+            if land_type:
+                sql += " AND land_type = %s"
+                values.append(land_type)
+
+            # DB connection
+            connection = db_connection()
+            if connection is None:
+                raise Exception("Database connection failed")  # Handle missing DB connection
+
+            cursor = connection.cursor()  # Remove dictionary=True here
+
+            # Execute the query
+            cursor.execute(sql, values)
+            rows = cursor.fetchall()
+
+            # Convert rows to dictionary
+            columns = [col[0] for col in cursor.description]  # Get column names
+            land = [dict(zip(columns, row)) for row in rows]
+
+            # Response
+            return jsonify({"message": "Success", "data": land})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while fetching land", "error": str(e)})
+
+        finally:
+            # Close the cursor if it exists
+            if cursor:
+                cursor.close()
+
+            # Close the DB connection if it exists
+            if connection:
+                connection.close()
+
+
+
+# Add Commercials route
+class AddCommercial(Resource):
+    def post(self):
+        # Extract fields from the request
+        user_id = request.form.get("user_id")
+        title = request.form.get("title")
+        description = request.form.get("description")
+        commercial_size = request.form.get("commercial_size")
+        price = request.form.get("price")
+        location = request.form.get("location")
+        parking_space = request.form.get("parking_space", "No")
+        utilities_available = request.form.get("utilities_available", "")
+        other_utilities = request.form.get("other_utilities", None)
+        commercial_type = request.form.get("commercial_type", "office")
+        
+        # Handle image upload
+        image = request.files.get("image")
+      
+        if image:
+            # Save the image to the static/images directory
+            image_filename = os.path.join("static/images", image.filename)
+            image.save(image_filename)
+          
+        else:
+            return jsonify({"message": "Missing image file."})
+
+        # Validate required fields
+        if not all([user_id, title, commercial_size, price, location, parking_space, utilities_available, commercial_type]):
+            return jsonify({"message": "Missing required fields. Please include property_id, title, commercial_size, price, location, parking_space, utilities_available, and commercial_type."})
+
+        # DB connection
+        connection = db_connection()
+        cursor = connection.cursor()
+
+        # Insert data into the commercials table
+        sql = """
+            INSERT INTO commercial (
+                user_id, title, description, commercial_size, price, location, 
+                parking_space, utilities_available, other_utilities, commercial_type, image
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        values = (
+            user_id, title, description, commercial_size, price, location,
+            parking_space, utilities_available, other_utilities, commercial_type, image
+        )
+        cursor.execute(sql, values)
+        connection.commit()
+
+        # Response
+        commercial_id = cursor.lastrowid
+        cursor.close()
+        connection.close()
+
+        return jsonify({"message": "Commercial added successfully", "commercial_id": commercial_id})
+
+
+
+# Get commercial
+class GetCommercial(Resource):
+    def get(self):
+        connection = None
+        cursor = None
+
+        try:
+            # Extract query parameters
+            user_id = request.args.get("user_id")
+            title = request.args.get("title")
+            location = request.args.get("location")
+            min_price = request.args.get("min_price")
+            max_price = request.args.get("max_price")
+            commercial_type = request.args.get("commercial_type")
+
+            # Build the base SQL query
+            sql = "SELECT * FROM commercial WHERE 1=1"
+            values = []
+
+            # Add filters based on available query parameters
+            if user_id:
+                sql += " AND user_id = %s"
+                values.append(user_id)
+
+            if title:
+                sql += " AND title LIKE %s"
+                values.append(f"%{title}%")
+
+            if location:
+                sql += " AND location LIKE %s"
+                values.append(f"%{location}%")
+
+            if min_price and max_price:
+                sql += " AND CAST(price AS UNSIGNED) BETWEEN %s AND %s"
+                values.extend([min_price, max_price])
+            elif min_price:
+                sql += " AND CAST(price AS UNSIGNED) >= %s"
+                values.append(min_price)
+            elif max_price:
+                sql += " AND CAST(price AS UNSIGNED) <= %s"
+                values.append(max_price)
+
+            if commercial_type:
+                sql += " AND commercial_type = %s"
+                values.append(commercial_type)
+
+            # DB connection
+            connection = db_connection()
+            if connection is None:
+                raise Exception("Database connection failed")  # Handle missing DB connection
+
+            cursor = connection.cursor()  # Remove dictionary=True here
+
+            # Execute the query
+            cursor.execute(sql, values)
+            rows = cursor.fetchall()
+
+            # Convert rows to dictionary
+            columns = [col[0] for col in cursor.description]  # Get column names
+            commercials = [dict(zip(columns, row)) for row in rows]
+
+            # Response
+            return jsonify({"message": "Success", "data": commercials})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while fetching commercials", "error": str(e)})
+
+        finally:
+            # Close the cursor if it exists
+            if cursor:
+                cursor.close()
+
+            # Close the DB connection if it exists
+            if connection:
+                connection.close()
+
+
 
 
 # Endpoints
@@ -454,7 +1052,14 @@ api.add_resource(GetPropertyWithAmenity, '/properties/amenity')
 api.add_resource(DeleteProperty, '/delete_property')
 api.add_resource(SaveToFavorites, '/savetofavourites')
 api.add_resource(GetFavorites, '/getfavorites')
-
+api.add_resource(AddApartment, '/addapartment')
+api.add_resource(GetApartment, '/getapartment')
+api.add_resource(AddHouse, '/addhouse')
+api.add_resource(GetHouse, '/gethouse')
+api.add_resource(AddLand, '/addland')
+api.add_resource(GetLand, '/getland')
+api.add_resource(AddCommercial, '/addcommercial')
+api.add_resource(GetCommercial, '/getcommercial')
 
 
 
