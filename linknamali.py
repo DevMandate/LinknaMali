@@ -310,6 +310,7 @@ class GetPropertyWithAmenity(Resource):
                 connection.close()
 
 
+# Delete Property API
 class DeleteProperty(Resource):
     def delete(self):
         try:
@@ -351,8 +352,7 @@ class DeleteProperty(Resource):
                 connection.close()
 
 
-
-
+# Save to favourite api
 class SaveToFavorites(Resource):
     def post(self):
         # Step 1: Get the input JSON body (expects user_id, property_id, and/or amenity_id)
@@ -407,6 +407,7 @@ class SaveToFavorites(Resource):
                 connection.close()
 
 
+# Get favourites 
 class GetFavorites(Resource):
     def post(self):
         # Step 1: Get the input JSON body (expects user_id)
@@ -1041,6 +1042,54 @@ class GetCommercial(Resource):
 
 
 
+# Service requests api
+class ServiceRequest(Resource):
+    def post(self):
+        try:
+            # Get the JSON data from the request body
+            data = request.get_json()
+
+            # Extract the data from the JSON body
+            user_id = data.get('user_id')
+            first_name = data.get('first_name')
+            service_name = data.get('service_name')
+            location = data.get('location')
+
+            # Check if all required fields are provided
+            if not user_id or not first_name or not service_name or not location:
+                return {"message": "Missing required fields"}, 400
+
+            # Connect to the database
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Insert data into service_requests table
+            insert_query = """
+                INSERT INTO service_requests (user_id, first_name, service_name, location)
+                VALUES (%s, %s, %s, %s)
+            """
+            cursor.execute(insert_query, (user_id, first_name, service_name, location))
+            connection.commit()
+
+            # Close the connection
+            cursor.close()
+            connection.close()
+
+            return {"message": "Service request created successfully"}, 201
+
+        except Exception as e:
+            return {"message": f"An error occurred: {str(e)}"}, 500
+
+
+
+
+
+
+
+
+
+
+
 # Endpoints
 api.add_resource(UserRegister, '/user_register')
 api.add_resource(UserLogin, '/user_login')
@@ -1060,6 +1109,7 @@ api.add_resource(AddLand, '/addland')
 api.add_resource(GetLand, '/getland')
 api.add_resource(AddCommercial, '/addcommercial')
 api.add_resource(GetCommercial, '/getcommercial')
+api.add_resource(ServiceRequest, '/service-request')
 
 
 
