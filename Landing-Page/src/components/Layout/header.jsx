@@ -108,7 +108,7 @@ function Nav({isMobile}) {
 
 function Logo({size}){
     return(
-        <img className={`w-[${size}px]`} src={LinknaMali} title="Link na Mali" alt="LinknaMali Logo"/>
+        <img style={{width:`${size}px`}} src={LinknaMali} title="Link na Mali" alt="LinknaMali Logo"/>
     )
 }
 
