@@ -63,6 +63,9 @@
         max-width: 200px;
         color: var(--text);
     }
+    .nav-item::after {
+        background-color: var(--text);
+    }
     .nav-item:hover::after {
         width: 100px;
     }
