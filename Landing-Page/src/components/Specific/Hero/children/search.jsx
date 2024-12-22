@@ -13,7 +13,7 @@ function Search() {
         <Container
             className=''
             maxWidth=''
-            sx={{backgroundColor:'var(--color-merime)', 
+            sx={{backgroundColor:'var(--background)', 
                 display: 'flex',
                 flexDirection:'column',
                 alignItems:'center',
@@ -29,13 +29,13 @@ function Search() {
             }}
         >
             <Options/>
-            <Grid2 container spacing={1} className='p-5 bg-[white] rounded-md'>
+            <Grid2 container spacing={1} className='p-5 bg-[var(--hamburger)] rounded-md'>
                 <BasicSelect />
                 <CheckMarks />
                 <PriceRange />
                 <Button
                     onClick={handleSearch}
-                    variant="contained"
+                    variant="contained" 
                     sx={{width:100,
                     backgroundColor:'var(--button-merime)',
                     transition: 'background-color 0.5s ease',

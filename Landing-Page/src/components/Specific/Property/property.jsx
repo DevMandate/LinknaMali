@@ -16,7 +16,6 @@ function Property() {
             sx={{
                 minHeight:'300px',
                 paddingTop:'50px',
-                backgroundColor:'var(--color-merime)'
             }}
         >
             <Heading title={Title} subtitle={Subtitle}/>

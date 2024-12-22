@@ -13,7 +13,8 @@ function Buttons() {
     return(
         <Box className='flex'
             sx={{
-            '@media (max-width: 380px)': {
+            '@media (max-width: 550px)': {
+                gap:2,
                 flexDirection: 'column-reverse',
             },
           }}
@@ -77,12 +78,16 @@ function Nav({isMobile}) {
 
     return(
         <>
-            <div className={`hamburger-menu flex-col ${menuOpen ? 'cross' : ''}`} onClick={toggleMenu}>
+            <div className={`hamburger-menu flex-col ${menuOpen ? 'cross' : ''}`} onClick={toggleMenu}
+            style={{
+                position: menuOpen ? 'fixed' : 'absolute',
+            }}
+            >
                 <div className="bar"></div>
                 <div className="bar"></div>
                 <div className="bar"></div>
             </div>
-            <Container maxWidth='sm' className={`nav-bar ${menuOpen ? 'active' : ''}`}>
+            <Container maxWidth='xs' className={`nav-bar ${menuOpen ? 'active' : ''}`}>
                 <ul> 
                     {isMobile &&(
                         <Logo size={100}/>

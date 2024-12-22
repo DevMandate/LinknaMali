@@ -4,9 +4,10 @@
     --button-merime: #22275E;
 
     --dark-Theme: #000000;
-    --light-Theme:var(--color-white) ;
+    --light-Theme:var(--color-merime) ;
     --hamburger-dark: #222222;
-    --hamburger-light: #EDEDED;
+    --hamburger-light: var(--color-white);
+    --input-contrast-text: rgba(232, 230, 227, 0.6);
 
 }
 body{
@@ -30,5 +31,6 @@ body[data-theme='dark']{
     --text: var(--light-Theme);
     --background-invert: var(--light-Theme);
     --text-inverter: var(--dark-Theme); 
-    --hamburger: var(--hamburger-dark)
+    --hamburger: var(--hamburger-dark);
+    --MUI-input: var(--input-contrast-text);
 }

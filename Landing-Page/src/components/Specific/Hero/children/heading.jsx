@@ -11,6 +11,10 @@ function Heading() {
                 variant="h2" 
                 fontWeight={400}
                 color="white"
+                sx={{
+                    wordWrap: 'break-word', 
+                    whiteSpace: 'normal',  
+                }}
             >
                 Transforming Real Estate in Kenya
             </Typography>

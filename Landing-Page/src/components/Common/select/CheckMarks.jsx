@@ -34,7 +34,16 @@ export default function MultipleSelectCheckmarks() {
 
   return (
     <div>
-      <FormControl sx={{ width: 150 }}>
+      <FormControl
+        sx={{
+          width: 150 ,
+          '& .MuiInputLabel-root': {
+            color: 'var(--MUI-input)',
+          },
+          '& .MuiSvgIcon-root' :{
+            fill: 'var(--MUI-input)',
+          }
+        }}>
         <InputLabel id="demo-multiple-checkbox-label">Property Type</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"

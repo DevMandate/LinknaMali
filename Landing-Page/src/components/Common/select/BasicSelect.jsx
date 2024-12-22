@@ -16,11 +16,17 @@ export default function BasicSelect() {
 
   return (
     <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Locations</InputLabel>
+      <FormControl fullWidth
+        sx={{
+          '& .MuiInputLabel-root': {
+            color: 'var(--MUI-input)',
+          },
+          '& .MuiSvgIcon-root' :{
+            fill: 'var(--MUI-input)',
+          }
+        }}>
+        <InputLabel>Locations</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
           value={location}
           label="Locations"
           onChange={handleChange}

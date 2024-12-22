@@ -33,10 +33,10 @@ function OptionsControl({ property }) {
     <Box className="flex justify-between mb-[20px]" style={{ padding: '0px 5px 0px 10px' }}>
       <Box className='flex items-center'>
         <ProfilePicture src={property.ownerImage} size={25}/>
-        <p className="text-sm text-gray-600 ml-[5px]">{property.owner}</p>
+        <p className="text-sm ml-[5px]">{property.owner}</p>
       </Box>  
       <Box className="flex items-center">
-        <div className="relative w-[25px] mr-[5px] flex justify-center rounded-[2px] bg-[var(--color-merime)]">
+        <div className="relative w-[25px] mr-[5px] flex justify-center ">
           <FavoriteIcon
             onClick={(event) => toggleLike(event)}
             style={{
@@ -50,16 +50,14 @@ function OptionsControl({ property }) {
             </span>
           )}
         </div>
-        <div className="w-[25px] flex justify-center items-center rounded-[2px] bg-[var(--color-merime)]">
-          <ShareIcon
-            onClick={(event) => toggleShare(event)}
-            style={{
-              fontSize: 15,
-              color: 'gray',
-              margin: '2px'
-            }}
-          />
-        </div>
+        <ShareIcon
+          onClick={(event) => toggleShare(event)}
+          style={{
+            fontSize: 18,
+            color: 'gray',
+            margin: '2px'
+          }}
+        />
       </Box>
     </Box>
   );
@@ -72,15 +70,15 @@ function OptionsDisplay({ property }) {
       <h4 className="text-base font-medium text-[0.9rem]">
         {property.name}, {property.location}
       </h4>
-      <p className="text-sm text-gray-600">{property.price}</p>
+      <p className="text-sm">{property.price}</p>
       <Box className='flex'>
-        <p className="text-sm text-gray-600 mr-[5px]">
+        <p className="text-sm mr-[5px]">
           <DirectionsCarIcon style={{ fontSize: 15 }} /> {property.parking}
         </p>
-        <p className="text-sm text-gray-600 mr-[5px]">
+        <p className="text-sm mr-[5px]">
           <BathtubIcon style={{ fontSize: 15 }} /> {property.bathrooms}
         </p>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm">
           <OpenWithIcon style={{ fontSize: 10 }} /> {property.size}
         </p>
       </Box>
@@ -121,7 +119,7 @@ function PropertyGrid() {
             borderRadius: "5px",
             overflow: "hidden",
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-            backgroundColor: "var(--color-white)",
+            backgroundColor: "var(--hamburger)",
           }}
         >
           <img

@@ -5,18 +5,33 @@ function PriceInput() {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
-  const width= 110;
+  const width= 130;
   return (
     <div>
       <TextField
-        sx={{width:`${width}px`, marginRight: 1}}
         label="Min Price"
         type="number"
         value={minPrice}
         onChange={(e) => setMinPrice(e.target.value)}
-      />
+        sx={{
+          width:`${width}px`, 
+          marginRight: 1,
+          '& .MuiInputBase-input': {
+            color: 'var(--text)',
+          },
+          '& .MuiInputLabel-root': {
+            color: 'var(--MUI-input)',
+          },
+        }}/>
       <TextField
-        sx={{width:`${width}px`}}
+        sx={{width:`${width}px`,
+        '& .MuiInputBase-input': {
+          color: 'var(--text)',
+        },
+        '& .MuiInputLabel-root': {
+          color: 'var(--MUI-input)',
+        },
+      }}
         label="Max Price"
         type="number"
         value={maxPrice}
