@@ -12,7 +12,11 @@ import owner3 from './images/content/Property/owner/owner-3.jpg'
 import owner4 from './images/content/Property/owner/owner-4.jpg'
 import owner5 from './images/content/Property/owner/owner-5.jpg'
 import owner6 from './images/content/Property/owner/owner-6.jpg'
-
+import Nairobi from './images/content/Property/property/Nairobi.png'
+import Kisumu from './images/content/Property/property/Kisumu.png'
+import Mombasa from './images/content/Property/property/Mombasa.png'
+import Nakuru from './images/content/Property/property/Nakuru.png'
+import Kiambu from './images/content/Property/property/Kiambu.png'
 export {
     LinknaMali,
     Hero,
@@ -28,4 +32,9 @@ export {
     owner4,
     owner5,
     owner6,
+    Nairobi,
+    Kisumu,
+    Mombasa,
+    Nakuru,
+    Kiambu,
 }

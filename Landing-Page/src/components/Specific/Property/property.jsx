@@ -3,7 +3,7 @@ import { Box,Container, Typography } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Heading from '../../Common/heading'
-
+import Options from './children/options'
 function Property() {
     const Title = 'Properties By Location';
     const Subtitle = 'Finding your dream spot made easy';
@@ -28,7 +28,8 @@ function Property() {
                     sx={{cursor:'pointer'}}
                 >View more property <FontAwesomeIcon icon={faArrowRight} />
                 </Typography>
-            </Container>   
+            </Container>
+            <Options/>   
         </Box>
     );
 }

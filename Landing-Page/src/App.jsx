@@ -10,8 +10,8 @@ function App() {
   return (
     <ThemeProvider>
       <Hero />
-      <Rentals/>
       <Property/>
+      <Rentals/>
     </ThemeProvider>
   )
 }
