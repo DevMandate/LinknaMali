@@ -11,6 +11,7 @@ function Search() {
     };
     return(
         <Container
+            id='search'
             className=''
             maxWidth=''
             sx={{backgroundColor:'var(--background)', 

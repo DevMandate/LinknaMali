@@ -5,7 +5,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Heading from '../../Common/heading'
 import Options from './children/options'
 function Property() {
-    const Title = 'Rentals & Air BnBs';
+    const Title = 'Featured Rentals & Airbnbs';
     const Subtitle = 'Find your perfect home away from home.';
     const handleProperty = () => {
         alert(`View more rentals`);

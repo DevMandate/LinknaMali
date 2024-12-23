@@ -1,14 +1,15 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Box, Avatar, Menu, MenuItem, ListItemIcon, Divider, Typography } from '@mui/material';
-import { Settings, Logout, SwitchAccount } from '@mui/icons-material';
-import {settings,MyAccount, dummy} from '../../../assets/routes';
-import { useProfile } from '../../../contexts/ProfileProvider'
+import { Logout, Person } from '@mui/icons-material';
+import {ThemeMuiSwitch} from './Switch'
+import {useTheme} from '../../context/Theme'
+import './css/profile.css'
 
-const MyAccount_Nav = () => {
+const MyAccount = ({isMobile}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -16,19 +17,22 @@ const MyAccount_Nav = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  //Fetch User data
-  const { name, email, ProfileImage } = useProfile();
+
+  const Profile = [{ Name: 'John Doe', email: 'johndoegmail.com' }]
+  const DummyRoutes =[{ dummy: '/dummy', settings: '/settings', MyAccount: '/myaccount' }]
+  const ProfileImage = ''
 
   return (
     <React.Fragment>
       <Box 
-        sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }} 
+        sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', marginRight: isMobile ? 7 : 2}} 
         onClick={handleClick}
-        className="dashboard-nav-icon Account-image"
+        className="Account"
       >
       {ProfileImage ? (
         <img 
           src={ProfileImage} 
+          className='Account-image'
           title="Profile picture" 
           alt="Account_image" 
         />
@@ -36,10 +40,6 @@ const MyAccount_Nav = () => {
         <Avatar sx={{
           width: 40, 
           height: 40,
-          '@media (max-width: 600px)': { 
-            width: '100%',
-            height: '100%',
-          }, 
         }} />
       )}
       </Box>
@@ -61,7 +61,6 @@ const MyAccount_Nav = () => {
                 height: 32,
                 ml: -0.5,
                 mr: 1,
-                //backgroundColor: 'var(--color-blue)',
               },
               '&::before': {
                 content: '""',
@@ -81,7 +80,7 @@ const MyAccount_Nav = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={() => { navigate(MyAccount); handleClose(); }}>
+        <MenuItem onClick={() => { Navigate(DummyRoutes.MyAccount); handleClose(); }}>
           {ProfileImage ? (
               <Box
               component="img"
@@ -94,32 +93,29 @@ const MyAccount_Nav = () => {
           <Box
             sx={{display:'flex', flexDirection: 'column'}}
             >
-            <Typography sx={{ ml: 2 }}>{name}</Typography>
-            <Typography sx={{ ml: 2, fontSize: '0.9rem'  }}>{email}</Typography>
+            <Typography sx={{ ml: 2 }}>{Profile[0].Name}</Typography>
+            <Typography sx={{ ml: 2, fontSize: '0.9rem'  }}>{Profile[0].email}</Typography>
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem onClick={() => { navigate(dummy); handleClose(); }}>
+        <MenuItem onClick={() => { Navigate(DummyRoutes.dummy); handleClose(); }}>
           <ListItemIcon>
-            <SwitchAccount fontSize="small" />
+            <Person fontSize="small" />
           </ListItemIcon>
-          Switch account
+          View Portal
         </MenuItem>
-        <MenuItem onClick={() => { navigate(settings); handleClose(); }}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={() => { navigate(dummy); handleClose(); }}>
+        <MenuItem onClick={() => { Navigate(DummyRoutes.dummy); handleClose(); }}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
+        </MenuItem>
+        <MenuItem>
+          <ThemeMuiSwitch toggleTheme={toggleTheme} checked={theme === 'dark'} />
         </MenuItem>
       </Menu>
     </React.Fragment>
   );
 };
 
-export default MyAccount_Nav;
+export default MyAccount;

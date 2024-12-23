@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-const Contact = () => {
+const About = () => {
   return (
     <Box
-      id="contact us"
+      id="about us"
       sx={{
         height: '100vh',
         paddingTop: '50px',
@@ -15,4 +15,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default About;
