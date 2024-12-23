@@ -14,7 +14,7 @@ function Options() {
     <Grid container spacing={2} className=''
         sx={{
             justifyContent: "center",
-            margin: "20px",
+            padding: "20px",
         }}>
       {PropertiesResponsive.map((property) => (
         <Grid item

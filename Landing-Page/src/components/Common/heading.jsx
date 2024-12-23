@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Typography } from "@mui/material";
 
-function Heading({title, subtitle}) {
+function Heading({title, subtitle, variant}) {
 
     return(
         <Container
@@ -12,7 +12,7 @@ function Heading({title, subtitle}) {
                 variant="h3"
             >{title}</Typography>
             <Typography
-                variant="h5"
+                variant={variant ? variant : "h5"}
             >{subtitle}</Typography>
            
         </Container>

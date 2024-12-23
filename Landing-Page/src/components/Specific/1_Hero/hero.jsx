@@ -10,7 +10,7 @@ function Hero() {
         <Box
             className='Hero'
             sx={{
-                minHeight:'500px',
+                minHeight:'100vh',
             }}
         >
             <Header />

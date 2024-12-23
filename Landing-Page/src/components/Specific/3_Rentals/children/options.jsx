@@ -82,13 +82,13 @@ function OptionsDisplay({ property }) {
           <OpenWithIcon style={{ fontSize: 10 }} /> {property.size}
         </p>
       </Box>
-      <hr className='mt-[10px] mb-[10px]'/>
+      <hr className='mt-[10px] mb-[10px] border-[var(--HR)]'/>
     </Box>
   );
 }
 
 function PropertyGrid() {
-  const isSmallScreen = useMediaQuery("(max-width: 450px)");
+  const isSmallScreen = useMediaQuery("(max-width: 555px)");
   const propertiesResponsive = isSmallScreen ? properties.slice(0, 3) : properties;
   
   const isImageHeight = useMediaQuery("(max-width: 1000px)");
@@ -100,14 +100,20 @@ function PropertyGrid() {
   return (
     <Container
       className=''
-      maxWidth='lg'
+      maxWidth=''
       sx={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
         gap: "20px",
         justifyContent: "center",
         "@media (max-width: 1000px)": {
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+        },
+        "@media (max-width: 870px)": {
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+        },
+        "@media (max-width: 670px)": {
+          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
         },
       }}
     >

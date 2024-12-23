@@ -1,8 +1,10 @@
 import React from 'react'
 import {ThemeProvider} from './context/Theme'
-import Hero from './components/Specific/Hero/hero'
-import Property from './components/Specific/Property/property'
-import Rentals from './components/Specific/Rentals/property'
+import Hero from './components/Specific/1_Hero/hero'
+import Property from './components/Specific/2_Property/property'
+import Rentals from './components/Specific/3_Rentals/property'
+import Services from './components/Specific/4_Services/services'
+import Contact from './components/Specific/5_Contact/contact'
 import './assets/styles/styles.css'
 import './assets/styles/theme.css'
 
@@ -12,6 +14,8 @@ function App() {
       <Hero />
       <Property/>
       <Rentals/>
+      <Services/>
+      <Contact/>
     </ThemeProvider>
   )
 }

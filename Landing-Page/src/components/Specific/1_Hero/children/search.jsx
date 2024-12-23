@@ -29,7 +29,7 @@ function Search() {
             }}
         >
             <Options/>
-            <Grid2 container spacing={1} className='p-5 bg-[var(--hamburger)] rounded-md'>
+            <Grid2 container spacing={1} className='p-5  rounded-md'>
                 <BasicSelect />
                 <CheckMarks />
                 <PriceRange />

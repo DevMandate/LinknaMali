@@ -1,14 +1,14 @@
 import React from "react";
-import { Box,Container, Typography } from "@mui/material";
+import { Container,Box, Typography } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Heading from '../../Common/heading'
 import Options from './children/options'
 function Property() {
-    const Title = 'Properties By Location';
-    const Subtitle = 'Finding your dream spot made easy';
+    const Title = 'Rentals & Air BnBs';
+    const Subtitle = 'Find your perfect home away from home.';
     const handleProperty = () => {
-        alert(`View more property`);
+        alert(`View more rentals`);
     };
     return(
         <Box
@@ -22,14 +22,14 @@ function Property() {
             <Container 
                 maxWidth='lg'
                 sx={{padding:'0px 20px'}}
-                className='flex justify-end mt-[40px] mb-[10px]'>
+                className='flex justify-end mt-[10px] mb-[20px]'>
                 <Typography 
                     onClick={handleProperty}
-                    sx={{cursor:'pointer'}}
-                >View more property <FontAwesomeIcon icon={faArrowRight} />
+                    sx={{cursor:'pointer', color:'#1976d2'}}
+                >View more <FontAwesomeIcon icon={faArrowRight} />
                 </Typography>
-            </Container>
-            <Options/>   
+            </Container>    
+            <Options/>
         </Box>
     );
 }

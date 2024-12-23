@@ -70,7 +70,7 @@ function Buttons() {
 
 function Nav({isMobile}) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const navItems = ["Home", "Property", "Services", "About"];
+    const navItems = ["Home", "Property", "Services", "Contact Us"];
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
