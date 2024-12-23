@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import Header from '../../Layout/Header/header';
 import Heading from './children/heading'
 import Search from './children/search'
@@ -9,9 +9,6 @@ function Hero() {
     return(
         <Box
             className='Hero'
-            sx={{
-                minHeight:'100vh',
-            }}
         >
             <Header />
             <Heading/>

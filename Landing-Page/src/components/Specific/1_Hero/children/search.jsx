@@ -18,14 +18,7 @@ function Search() {
                 flexDirection:'column',
                 alignItems:'center',
                 paddingTop: 2,
-                marginTop:'80px',
-                maxWidth:'710px',
-                borderTopLeftRadius: '5px',
-                borderTopRightRadius: '5px',
-                '@media (max-width: 900px)': {
-                    borderTopLeftRadius: 0,
-                    borderTopRightRadius: 0,
-                },
+                marginTop:'30px',
             }}
         >
             <Options/>
@@ -34,7 +27,7 @@ function Search() {
                 <CheckMarks />
                 <PriceRange />
                 <Button
-                    onClick={handleSearch}
+                    onClick={handleSearch} 
                     variant="contained" 
                     sx={{width:100,
                     backgroundColor:'var(--button-merime)',

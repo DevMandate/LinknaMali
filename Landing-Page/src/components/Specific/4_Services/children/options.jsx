@@ -13,17 +13,14 @@ const Options = () => {
     return (
         <Container
             className=''
-            maxWidth=''
+            maxWidth='lg'
             sx={{
                 minHeight: "100vh",
                 padding:'30px 20px',
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
                 gap: "20px",
                 justifyContent: "center",
-                "@media (max-width: 1280px)": {
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                },
                 "@media (max-width: 670px)": {
                 gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
                 },

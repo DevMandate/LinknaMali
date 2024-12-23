@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Button, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import Contact from './children/contact';
-import Features from './children/features';
+import QuickLinks from './children/quickLinks';
 import Company from './children/company';
 import Legals from './children/legals';
 const Footer = () => {
@@ -10,13 +10,19 @@ const Footer = () => {
         sx={{
             minHeight: '300px',
             padding: '20px',
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "10px",
+            justifyContent: "center",
+            "@media (max-width: 400px)": {
+              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            },
         }}
-        className='flex'
     >
         <Contact />
-        <Features />
+        <QuickLinks />
         <Company />
-        <Legals />
+        <Legals /> 
     </Box>
   );
 };

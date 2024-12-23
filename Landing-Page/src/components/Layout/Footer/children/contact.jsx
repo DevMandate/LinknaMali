@@ -1,6 +1,5 @@
 import React from 'react';
 import { Container, Typography } from "@mui/material";
-import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
@@ -26,10 +25,10 @@ const Contact = () => {
     };
 
     return (
-        <Container maxWidth='xs' className='div'>
-            <Typography variant='h5' sx={{marginBottom:2,}}>Contact Us</Typography>
-            <Typography variant='body2'><PhoneIcon /> +254 700 112 233</Typography>
-            <Typography variant='body2'><PhoneIcon /> +254 700 112 233</Typography>
+        <Container maxWidth='xs' className=''>
+            <Typography variant='h5' sx={{marginBottom:2,}}>Contact Us </Typography>
+            <Typography variant='body2'>+254 700 112 233</Typography>
+            <Typography variant='body2'>+254 700 112 233</Typography>
             <Typography style={{cursor:'pointer', marginBottom:'10px'}} onClick={handleEmailClick}><EmailIcon /> merime@gmail.com</Typography>
             <address onClick={handleAddressClick} style={{cursor:'pointer', marginBottom: '20px'}} className='flex'>
             <LocationOnIcon /> Mkoroshoni, 100m from Kichinjioni gate<br />
@@ -44,7 +43,7 @@ export default Contact;
 
 function SocialIcons () {
     const fill='var(--text)';
-    const size='30';
+    const size='24';
   return (
     <div style={{ display: 'flex', gap:'15px' }}>
       {/* Facebook */}

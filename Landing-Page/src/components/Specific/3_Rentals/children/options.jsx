@@ -100,18 +100,12 @@ function PropertyGrid() {
   return (
     <Container
       className=''
-      maxWidth=''
+      maxWidth='lg'
       sx={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
         gap: "20px",
         justifyContent: "center",
-        "@media (max-width: 1000px)": {
-          gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
-        },
-        "@media (max-width: 870px)": {
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        },
         "@media (max-width: 670px)": {
           gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
         },

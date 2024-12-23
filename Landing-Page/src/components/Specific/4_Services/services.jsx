@@ -21,7 +21,6 @@ const Services = () => {
             minHeight:'300px',
             marginTop:'50px',
             paddingTop:'20px',
-            backgroundColor:'var(--background2)',
         }}>
             <Heading title={Title} subtitle={Subtitle} variant={variant}/>
             <Container 

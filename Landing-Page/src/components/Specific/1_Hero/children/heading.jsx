@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Container } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 function Heading() {
 
@@ -13,7 +13,10 @@ function Heading() {
                 color="white"
                 sx={{
                     wordWrap: 'break-word', 
-                    whiteSpace: 'normal',  
+                    whiteSpace: 'normal', 
+                    '@media (max-width:750px)': {
+                        fontSize: '2.5rem',
+                    }, 
                 }}
             >
                 Transforming Real Estate in Kenya
@@ -21,6 +24,11 @@ function Heading() {
             <Typography 
                 variant="h3"
                 color="white"
+                sx={{
+                    '@media (max-width:750px)': {
+                        fontSize: '2rem',
+                    },
+                }}
             >
                 Seamless, secure and Smart
             </Typography>

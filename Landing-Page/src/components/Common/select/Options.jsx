@@ -15,7 +15,7 @@ export default function Options() {
   };
 
   return (
-    <Box display="flex" flexWrap="wrap" gap={2} className='mb-[40px]'>
+    <Box display="flex" flexWrap="wrap" gap={2} className=''>
       {buttons.map((button) => (
         <Button
           key={button.id}
