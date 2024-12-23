@@ -5,6 +5,7 @@ import Property from './components/Specific/2_Property/property'
 import Rentals from './components/Specific/3_Rentals/property'
 import Services from './components/Specific/4_Services/services'
 import Contact from './components/Specific/5_Contact/contact'
+import Footer from './components/Layout/Footer/footer'
 import './assets/styles/styles.css'
 import './assets/styles/theme.css'
 
@@ -15,7 +16,7 @@ function App() {
       <Property/>
       <Rentals/>
       <Services/>
-      <Contact/>
+      <Footer/>
     </ThemeProvider>
   )
 }

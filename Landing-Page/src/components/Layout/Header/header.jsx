@@ -2,9 +2,9 @@ import React, {useState} from "react";
 import { Link } from "react-scroll";
 import { Box, Button, Container } from "@mui/material";
 import { useMediaQuery } from "@mui/material";
-import {ThemeMuiSwitch} from '../Common/Switch'
-import {useTheme} from '../../context/Theme'
-import {LinknaMali} from '../../assets/images'
+import {ThemeMuiSwitch} from '../../Common/Switch'
+import {useTheme} from '../../../context/Theme'
+import {LinknaMali} from '../../../assets/images'
 import './css/header.css'
 import './css/hamburger.css'
 

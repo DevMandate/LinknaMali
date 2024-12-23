@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Container } from "@mui/material";
-import Header from '../../Layout/header';
+import Header from '../../Layout/Header/header';
 import Heading from './children/heading'
 import Search from './children/search'
 import './css/hero.css'
