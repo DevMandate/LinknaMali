@@ -1,16 +1,18 @@
 import React from 'react';
 import { Box, Container, useMediaQuery } from '@mui/material';
+import {usePriorityDisplay} from '../../../context/PriorityDisplay'
 import {Merime} from '../../../assets/images'
 import Main from './children/main'
 const About = () => {
+  const {priorityDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 1000px)");
   return (
     <Box
       id="about us"
       sx={{
+        display: priorityDisplay === null ? 'flex' : 'none',
         minHeight: '400px',
         paddingTop: '50px',
-        display: 'flex',
       }}
     >
       {!isSmallScreen? (<Container maxWidth='xs' sx={{padding:'0px !important'}}>

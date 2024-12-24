@@ -1,38 +1,28 @@
 import React from 'react';
-import { Box, Container, Typography } from '@mui/material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { Box } from '@mui/material';
+import {usePriorityDisplay} from '../../../context/PriorityDisplay'
+import PriorityDisplayControl from '../../Common/PriorityDisplayControl';
 import Heading from '../../Common/heading'
 import Options from './children/options'
 
 const Services = () => {
+    const {priorityDisplay} = usePriorityDisplay();
     const Title = 'Explore Our Services';
     const Subtitle = 'From Discovery to Management, We’re Here for Every Step of Your Journey';
     const subVariant="h6"
-    const handleServices = () => {
-        alert(`View more services`);
-    };
 
     return (
         <Box 
         id='services'
         className=''
         sx={{
+            display: priorityDisplay === 'services' || priorityDisplay === null ? 'block' : 'none',
             minHeight:'300px',
             marginTop:'50px',
             paddingTop:'20px',
         }}>
             <Heading title={Title} subtitle={Subtitle} subVariant={subVariant}/>
-            <Container 
-                maxWidth='lg'
-                sx={{padding:'0px 20px'}}
-                className='flex justify-end'>
-                <Typography 
-                    onClick={handleServices}
-                    sx={{cursor:'pointer', color:'#1976d2'}}
-                >Get more services <FontAwesomeIcon icon={faArrowRight} />
-                </Typography>
-            </Container>
+            <PriorityDisplayControl display='services' text='Get more services'/>
             <Options/>
         </Box>
     );

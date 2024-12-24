@@ -102,6 +102,7 @@ function PropertyGrid() {
       className=''
       maxWidth='lg'
       sx={{
+        marginTop: "20px",
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
         gap: "20px",

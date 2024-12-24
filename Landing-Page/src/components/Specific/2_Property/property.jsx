@@ -1,35 +1,26 @@
 import React from "react";
-import { Box,Container, Typography } from "@mui/material";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { Box } from "@mui/material";
+import {usePriorityDisplay} from '../../../context/PriorityDisplay'
+import PriorityDisplayControl from '../../Common/PriorityDisplayControl';
 import Heading from '../../Common/heading'
 import Options from './children/options'
 function Property() {
+    const {priorityDisplay} = usePriorityDisplay();
     const Title = 'Properties By Location';
     const Subtitle = 'Finding your dream spot made easy';
-    const handleProperty = () => {
-        alert(`View more property`);
-    };
+
     return(
         <Box
             id='property'
             className=''
             sx={{
+                display: priorityDisplay === 'property' || priorityDisplay === null ? 'block' : 'none',
                 minHeight:'300px',
                 paddingTop:'50px',
             }}
         >
             <Heading title={Title} subtitle={Subtitle}/>
-            <Container 
-                maxWidth='lg'
-                sx={{padding:'0px 20px'}}
-                className='flex justify-end mt-[40px]'>
-                <Typography 
-                    onClick={handleProperty}
-                    sx={{cursor:'pointer', color:'#1976d2'}}
-                >View more property <FontAwesomeIcon icon={faArrowRight} />
-                </Typography>
-            </Container>
+            <PriorityDisplayControl display='property' text='View more property'/>
             <Options/>   
         </Box>
     );
