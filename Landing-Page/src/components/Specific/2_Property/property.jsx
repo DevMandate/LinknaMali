@@ -16,7 +16,7 @@ function Property() {
             sx={{
                 display: priorityDisplay === 'property' || priorityDisplay === null ? 'block' : 'none',
                 minHeight:'300px',
-                paddingTop:'50px',
+                paddingTop:'20px',
             }}
         >
             <Heading title={Title} subtitle={Subtitle}/>

@@ -1,9 +1,9 @@
 import React from "react";
 import { Button, Container, Grid2 } from "@mui/material";
-import BasicSelect from '../../../Common/select/BasicSelect'
-import CheckMarks from '../../../Common/select/CheckMarks'
-import PriceRange from '../../../Common/select/PriceRange'
-import Options from '../../../Common/select/Options'
+import BasicSelect from './select/BasicSelect'
+import CheckMarks from './select/CheckMarks'
+import PriceRange from './select/PriceRange'
+import Options from './select/Options'
 
 function Search() {
     const handleSearch = () => {
@@ -13,13 +13,12 @@ function Search() {
         <Container
             id='search'
             className=''
-            maxWidth=''
+            maxWidth='false'
             sx={{backgroundColor:'var(--background)', 
                 display: 'flex',
                 flexDirection:'column',
                 alignItems:'center',
-                paddingTop: 2,
-                marginTop:'30px',
+                paddingTop: 3,
             }}
         >
             <Options/>

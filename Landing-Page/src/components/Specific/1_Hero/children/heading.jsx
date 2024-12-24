@@ -1,11 +1,14 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-
+import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
 function Heading() {
-
+    const {priorityDisplay} = usePriorityDisplay();
     return(
         <Box
-            sx={{padding:2}}
+            sx={{
+                display: priorityDisplay === null ? 'block' : 'none',
+                padding:2
+            }}
         >
             <Typography 
                 variant="h2" 

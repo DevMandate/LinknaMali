@@ -1,8 +1,8 @@
 import React from "react";
 import { Box } from "@mui/material";
+import Search from '../../../components/Common/Search/search'
 import Header from '../../Layout/Header/header';
 import Heading from './children/heading'
-import Search from './children/search'
 import './css/hero.css'
 function Hero() {
 
