@@ -2,10 +2,16 @@ import React from 'react';
 import { Container, Box, Typography, useMediaQuery } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
+import {gridSize} from '../../../../utils/gridSize'
 import Services from './data/services';
 const Options = () => {
+    const {priorityDisplay} = usePriorityDisplay();
     const isSmallScreen = useMediaQuery("(max-width: 560px)");
-    const ServicesResponsive = isSmallScreen ? Services.slice(0, 3) : Services;
+    const priorityDisplayLink = 'services';
+    const ServicesResponsive = gridSize(isSmallScreen,priorityDisplay,priorityDisplayLink, Services);
+
+
     
     const handleServiceClick = (services) => {
         alert(`You clicked on ${services.name}`);
@@ -15,7 +21,6 @@ const Options = () => {
             className=''
             maxWidth='lg'
             sx={{
-                minHeight: "100vh",
                 padding:'30px 20px',
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",

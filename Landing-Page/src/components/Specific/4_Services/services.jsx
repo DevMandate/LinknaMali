@@ -17,7 +17,6 @@ const Services = () => {
         className=''
         sx={{
             display: priorityDisplay === 'services' || priorityDisplay === null ? 'block' : 'none',
-            minHeight:'300px',
             marginTop:'50px',
             paddingTop:'20px',
         }}>

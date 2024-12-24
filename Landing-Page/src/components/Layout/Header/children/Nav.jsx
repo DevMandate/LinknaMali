@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { Link } from "react-scroll";
 import { Container } from "@mui/material";
 import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
+import {scrollIntoView} from '../../../../utils/scrollIntoView'
 import Profile from '../../../Common/Profile'
 import Buttons from './buttons'
 import Logo from './Logo'
@@ -15,8 +16,13 @@ function Nav({isMobile}) {
         setMenuOpen(!menuOpen);
     };
     
-    const checklist = ( ) => {
-        setMenuOpen(false);
+    const checklist = (link) => {
+        console.log(`i got ${link}`);
+        setMenuOpen(false); 
+        if (priorityDisplay != null){
+            setPriorityDisplay(null);
+            scrollIntoView(link);
+        }    
     };
 
     return(
@@ -41,7 +47,7 @@ function Nav({isMobile}) {
                     {navItems.map((item, index) => (
                         <li className="nav-item" key={index}>
                             <Link  
-                                onClick={checklist}
+                                onClick={()=> checklist(item.toLowerCase())}
                                 to={item.toLowerCase()} 
                                 smooth={true} 
                                 duration={500}

@@ -11,6 +11,7 @@ function Property() {
 
     return(
         <Box
+            id='rentals'
             className=''
             sx={{
                 display: priorityDisplay === 'rentals' || priorityDisplay === null ? 'block' : 'none',

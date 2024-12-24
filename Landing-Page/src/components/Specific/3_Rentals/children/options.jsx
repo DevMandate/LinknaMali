@@ -1,5 +1,7 @@
 import React,{useState} from "react";
 import { Container,Box, useMediaQuery } from "@mui/material";
+import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
+import {gridSize} from '../../../../utils/gridSize'
 import properties from "./data/properties";
 import ShareIcon from '@mui/icons-material/Share';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -13,7 +15,7 @@ function OptionsControl({ property }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isShared, setIsShared] = useState(false);
 
-  const toggleLike = (event) => {
+  const toggleLike = (event) => { 
     event.stopPropagation();
     if (!isLiked) {
       setLikes((prevLikes) => prevLikes + 1); 
@@ -88,8 +90,10 @@ function OptionsDisplay({ property }) {
 }
 
 function PropertyGrid() {
-  const isSmallScreen = useMediaQuery("(max-width: 555px)");
-  const propertiesResponsive = isSmallScreen ? properties.slice(0, 3) : properties;
+  const {priorityDisplay} = usePriorityDisplay();
+  const isSmallScreen = useMediaQuery("(max-width: 560px)");
+  const priorityDisplayLink = 'rentals';
+  const propertiesResponsive = gridSize(isSmallScreen,priorityDisplay,priorityDisplayLink, properties);
   
   const isImageHeight = useMediaQuery("(max-width: 1000px)");
   const ImageHeight = isImageHeight ? "100px" : "200px";

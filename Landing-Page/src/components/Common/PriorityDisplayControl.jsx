@@ -3,15 +3,15 @@ import { Container, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import {usePriorityDisplay} from '../../context/PriorityDisplay'
-
+import {scrollIntoView} from '../../utils/scrollIntoView'
 const PriorityDisplayControl = ({display, text}) => {
     const {priorityDisplay, setPriorityDisplay} = usePriorityDisplay();
     const handleViewMore = () => {
-        console.log(display)
         setPriorityDisplay(display);
     };
     const handleViewLess = () => {
         setPriorityDisplay(null);
+        scrollIntoView(display);
     }
 
     return (
