@@ -8,7 +8,7 @@ import Options from './children/options'
 const Services = () => {
     const Title = 'Explore Our Services';
     const Subtitle = 'From Discovery to Management, We’re Here for Every Step of Your Journey';
-    const variant="h6"
+    const subVariant="h6"
     const handleServices = () => {
         alert(`View more services`);
     };
@@ -22,7 +22,7 @@ const Services = () => {
             marginTop:'50px',
             paddingTop:'20px',
         }}>
-            <Heading title={Title} subtitle={Subtitle} variant={variant}/>
+            <Heading title={Title} subtitle={Subtitle} subVariant={subVariant}/>
             <Container 
                 maxWidth='lg'
                 sx={{padding:'0px 20px'}}

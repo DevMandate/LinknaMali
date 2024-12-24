@@ -18,7 +18,7 @@ function Options() {
         }}>
       {PropertiesResponsive.map((property) => (
         <Grid item
-         key={property.index}
+         key={property.id}
          sx={{position: 'relative', height:'auto'}}
          ><img src={property.image} 
             alt={property.name}

@@ -1,5 +1,6 @@
 import LinknaMali from './images/logo/LinknaMali.png'
 import Hero from './images/content/hero.png'
+import Merime from './images/content/merime.webp'
 import rental1 from './images/content/Property/property/rental-1.png'
 import rental2 from './images/content/Property/property/rental-2.png'
 import rental3 from './images/content/Property/property/rental-3.png'
@@ -20,6 +21,7 @@ import Kiambu from './images/content/Property/property/Kiambu.png'
 export {
     LinknaMali,
     Hero,
+    Merime,
     rental1,
     rental2,
     rental3,
