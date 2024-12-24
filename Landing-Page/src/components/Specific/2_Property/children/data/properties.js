@@ -41,6 +41,36 @@ const properties = [
     name: "Kisumu",
     listings: getRandomListings(),
   },
+  {
+    id: 6,
+    image: Nairobi,
+    name: "Nairobi Suburbs",
+    listings: getRandomListings(),
+  },
+  {
+    id: 7,
+    image: Kiambu,
+    name: "Thika",
+    listings: getRandomListings(),
+  },
+  {
+    id: 8,
+    image: Nakuru,
+    name: "Naivasha",
+    listings: getRandomListings(),
+  },
+  {
+    id: 9,
+    image: Mombasa,
+    name: "Diani",
+    listings: getRandomListings(),
+  },
+  {
+    id: 10,
+    image: Mombasa,
+    name: "Kisumu West",
+    listings: getRandomListings(),
+  },
 ];
 
 export default properties;

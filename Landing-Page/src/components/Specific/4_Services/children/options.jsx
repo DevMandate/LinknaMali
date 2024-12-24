@@ -8,8 +8,7 @@ import Services from './data/services';
 const Options = () => {
     const {priorityDisplay} = usePriorityDisplay();
     const isSmallScreen = useMediaQuery("(max-width: 560px)");
-    const priorityDisplayLink = 'services';
-    const ServicesResponsive = gridSize(isSmallScreen,priorityDisplay,priorityDisplayLink, Services);
+    const ServicesResponsive = gridSize(isSmallScreen,priorityDisplay,'services', Services, 3,6);
 
 
     

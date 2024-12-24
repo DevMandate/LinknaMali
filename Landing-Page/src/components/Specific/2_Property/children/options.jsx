@@ -1,14 +1,17 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
 import properties from "./data/properties";
+import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
+import {gridSize} from '../../../../utils/gridSize'
 import { useMediaQuery, Typography, Box } from "@mui/material";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 function Options() {
+  const {priorityDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 910px)");
-  const PropertiesResponsive = isSmallScreen ? properties.slice(0, 2) : properties;
+  const PropertiesResponsive = gridSize(isSmallScreen,priorityDisplay,'property', properties, 2,5);
   const handleProperty = (property) => {
-    alert(`View ${property.name} ?`);
+    alert(`View ${property.name} ?`); 
 };
   return (
     <Grid container spacing={2} className=''

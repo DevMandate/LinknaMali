@@ -92,8 +92,7 @@ function OptionsDisplay({ property }) {
 function PropertyGrid() {
   const {priorityDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 560px)");
-  const priorityDisplayLink = 'rentals';
-  const propertiesResponsive = gridSize(isSmallScreen,priorityDisplay,priorityDisplayLink, properties);
+  const propertiesResponsive = gridSize(isSmallScreen,priorityDisplay,'rentals', properties, 3,6);
   
   const isImageHeight = useMediaQuery("(max-width: 1000px)");
   const ImageHeight = isImageHeight ? "100px" : "200px";
