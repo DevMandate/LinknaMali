@@ -7,6 +7,7 @@ import Property from './components/Specific/2_Property/property'
 import Rentals from './components/Specific/3_Rentals/property'
 import Services from './components/Specific/4_Services/services'
 import About from './components/Specific/5_About/about'
+import PropertyDetails from './components/Specific/6_PropertyDetails/propertyDetails'
 import Footer from './components/Layout/Footer/footer'
 import './assets/styles/styles.css'
 import './assets/styles/theme.css'
@@ -21,6 +22,7 @@ function App() {
       <Rentals/>
       <Services/>
       <About/>
+      <PropertyDetails/>
       <Footer/>
     </ThemeProvider>
     </LoginProvider>

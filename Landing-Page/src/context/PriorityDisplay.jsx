@@ -4,9 +4,10 @@ const PriorityDisplayContext = createContext();
 
 export const PriorityDisplayProvider = ({ children }) => {
   const [priorityDisplay, setPriorityDisplay] = useState(null);
+  const [detailsDisplay, setDetailsDisplay] = useState(null);
 
   return (
-    <PriorityDisplayContext.Provider value={{ priorityDisplay, setPriorityDisplay }}>
+    <PriorityDisplayContext.Provider value={{ priorityDisplay, setPriorityDisplay, detailsDisplay, setDetailsDisplay }}>
       {children}
     </PriorityDisplayContext.Provider>
   );

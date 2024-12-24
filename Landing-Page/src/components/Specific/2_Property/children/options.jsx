@@ -7,12 +7,13 @@ import { useMediaQuery, Typography, Box } from "@mui/material";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 function Options() {
-  const {priorityDisplay} = usePriorityDisplay();
+  const {priorityDisplay,setPriorityDisplay, setDetailsDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 910px)");
   const PropertiesResponsive = gridSize(isSmallScreen,priorityDisplay,'property', properties, 2,5);
   const handleProperty = (property) => {
-    alert(`View ${property.name} ?`); 
-};
+    setPriorityDisplay('propertyDetails');
+    setDetailsDisplay(property);
+  };
   return (
     <Grid container spacing={2} className=''
         sx={{

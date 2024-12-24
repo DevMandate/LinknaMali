@@ -90,7 +90,7 @@ function OptionsDisplay({ property }) {
 }
 
 function PropertyGrid() {
-  const {priorityDisplay} = usePriorityDisplay();
+  const {priorityDisplay, setPriorityDisplay, setDetailsDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 560px)");
   const propertiesResponsive = gridSize(isSmallScreen,priorityDisplay,'rentals', properties, 3,6);
   
@@ -98,7 +98,8 @@ function PropertyGrid() {
   const ImageHeight = isImageHeight ? "100px" : "200px";
 
   function handlePropertyClick(property) {
-    alert(`Property Clicked: ${property.name}`);
+    setPriorityDisplay('propertyDetails');
+    setDetailsDisplay(property);
   }
   return (
     <Container
