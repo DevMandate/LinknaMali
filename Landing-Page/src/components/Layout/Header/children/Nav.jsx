@@ -12,6 +12,9 @@ function Nav({isMobile}) {
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
     };
+    const closeMenu = () => {
+        setMenuOpen(false);
+    };
 
     return(
         <>
@@ -38,6 +41,7 @@ function Nav({isMobile}) {
                                 to={item.toLowerCase()} 
                                 smooth={true} 
                                 duration={500}
+                                onClick={closeMenu}
                             >{item}
                             </Link>
                         </li>

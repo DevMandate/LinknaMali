@@ -15,8 +15,8 @@ function Buttons({isMobile}) {
     return(
         <Box className='flex'
             sx={{
+            gap:2,
             '@media (max-width: 550px)': {
-                gap:2,
                 flexDirection: 'column-reverse',
             },
           }}
@@ -27,49 +27,18 @@ function Buttons({isMobile}) {
             {!isLoggedIn && (
                 <>
                 <ThemeMuiSwitch toggleTheme={toggleTheme} checked={theme === 'dark'} />
-                <Button
-                    sx={{
-                        color:'white',
-                        transition: 'color 0.5s ease',
-                        "&:hover": {
-                            color: "#EDEDED"
-                        },
-                        '@media (max-width: 1000px)': {
-                            color: 'inherit',
-                        },
-                    }}
-                >Log In</Button>
-                <Button
-                    variant="contained"
-                    sx={{
-                        marginLeft:'20px',
-                        marginRight:'10px',
-                        backgroundColor:'#22275E',
-                        transition: 'background-color 0.5s ease',
-                        "&:hover": {
-                            backgroundColor: "#343A85"
-                        },
-                        '@media (max-width: 380px)': {
-                            marginLeft:'0px',
-                            marginRight:'0px',
-                        }
-                    }}
-                >Sign Up</Button>
+                <Login color={true}/>
+                <SignUp/>
             </>)}
             <Button
                 variant="contained"
                 sx={{
-                    marginLeft: isLoggedIn ? '0px' : '20px',
                     marginRight:'10px',
                     backgroundColor:'red',
                     transition: 'background-color 0.5s ease',
                     "&:hover": {
                         backgroundColor: "#FF0000"
                     },
-                    '@media (max-width: 380px)': {
-                        marginLeft:'0px',
-                        marginRight:'0px',
-                    }
                 }}
                 onClick={toggleLogin}
             >Create Listing</Button>
@@ -77,3 +46,34 @@ function Buttons({isMobile}) {
     );
 }
 export default Buttons;
+
+export function Login({color}) {
+    return(
+        <Button
+            sx={{
+                color:'white',
+                transition: 'color 0.5s ease',
+                "&:hover": {
+                    ...(color && { color: "#EDEDED" }),
+                },
+                '@media (max-width: 1000px)': {
+                    color: 'inherit',
+                    "&:hover":{
+                        color: 'unset'
+                    }
+                },
+            }}
+        >Log In</Button>
+    );
+}
+
+export function SignUp() {
+    return(
+        <Button
+            variant='contained'
+        >Sign Up</Button>
+
+    );
+}
+
+

@@ -4,12 +4,15 @@ import { Box, Avatar, Menu, MenuItem, ListItemIcon, Divider, Typography } from '
 import { Logout, Person } from '@mui/icons-material';
 import {ThemeMuiSwitch} from './Switch'
 import {useTheme} from '../../context/Theme'
+import {useLogin} from '../../context/IsLoggedIn'
+import {SignUp, Login} from '../Layout/Header/children/buttons'
 import './css/profile.css'
 
 const MyAccount = ({isMobile}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const { theme, toggleTheme } = useTheme();
+  const { isLoggedIn} = useLogin();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -29,7 +32,7 @@ const MyAccount = ({isMobile}) => {
         onClick={handleClick}
         className="Account"
       >
-      {ProfileImage ? (
+      {isLoggedIn && ProfileImage ? (
         <img 
           src={ProfileImage} 
           className='Account-image'
@@ -80,39 +83,54 @@ const MyAccount = ({isMobile}) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={() => { Navigate(DummyRoutes.MyAccount); handleClose(); }}>
-          {ProfileImage ? (
+        {!isLoggedIn && (
+          <>
+          <MenuItem>
+            <Login/>
+          </MenuItem>
+          <Divider />
+          <MenuItem>
+            <SignUp />
+          </MenuItem>
+          </>
+        )}
+        {isLoggedIn && (
+          <>
+            <MenuItem onClick={() => { Navigate(DummyRoutes.MyAccount); handleClose(); }}>
+              {ProfileImage ? (
+                  <Box
+                  component="img"
+                  src={ProfileImage}
+                  sx={{ width: 32, height: 32, borderRadius: '50%' }}
+                  />
+              ) : (
+                  <Avatar sx={{ width: 32, height: 32, borderRadius: '50%' }} />
+              )}
               <Box
-              component="img"
-              src={ProfileImage}
-              sx={{ width: 32, height: 32, borderRadius: '50%' }}
-              />
-          ) : (
-              <Avatar sx={{ width: 32, height: 32, borderRadius: '50%' }} />
-          )}
-          <Box
-            sx={{display:'flex', flexDirection: 'column'}}
-            >
-            <Typography sx={{ ml: 2 }}>{Profile[0].Name}</Typography>
-            <Typography sx={{ ml: 2, fontSize: '0.9rem'  }}>{Profile[0].email}</Typography>
-          </Box>
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={() => { Navigate(DummyRoutes.dummy); handleClose(); }}>
-          <ListItemIcon>
-            <Person fontSize="small" />
-          </ListItemIcon>
-          View Portal
-        </MenuItem>
-        <MenuItem onClick={() => { Navigate(DummyRoutes.dummy); handleClose(); }}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-        <MenuItem>
-          <ThemeMuiSwitch toggleTheme={toggleTheme} checked={theme === 'dark'} />
-        </MenuItem>
+                sx={{display:'flex', flexDirection: 'column'}}
+                >
+                <Typography sx={{ ml: 2 }}>{Profile[0].Name}</Typography>
+                <Typography sx={{ ml: 2, fontSize: '0.9rem'  }}>{Profile[0].email}</Typography>
+              </Box>
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={() => { Navigate(DummyRoutes.dummy); handleClose(); }}>
+              <ListItemIcon>
+                <Person fontSize="small" />
+              </ListItemIcon>
+              View Portal
+            </MenuItem>
+            <MenuItem onClick={() => { Navigate(DummyRoutes.dummy); handleClose(); }}>
+              <ListItemIcon>
+                <Logout fontSize="small" />
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+            <MenuItem>
+              <ThemeMuiSwitch toggleTheme={toggleTheme} checked={theme === 'dark'} />
+            </MenuItem>
+          </>
+        )}
       </Menu>
     </React.Fragment>
   );
