@@ -20,20 +20,29 @@ const PriorityDisplayControl = ({display, text}) => {
             sx={{padding:'0px 20px'}}
             className='flex justify-end'>
             <Typography 
+                className={`${priorityDisplay === display ? 'bounce': ''}`}
                 onClick={ priorityDisplay === display ? handleViewLess : handleViewMore}
                 sx={{ 
                     color: priorityDisplay===display? 'white': '#1976d2' ,
                     backgroundColor: priorityDisplay === display? 'red' : 'none',
-                    padding: '5px 10px',
+                    padding: '15px 15px',
                     borderRadius: '5px',
                     zIndex: 2,
                     cursor: 'pointer', 
+                    position: priorityDisplay === display? 'fixed' : 'unset',
+                    right: '100px',
+                    top: '300px',
+                    '@media (max-width:700px)': {
+                        top: 'unset',
+                        right: '30px',
+                        bottom: '30px',
+                    },
                 }}
             >
                 {priorityDisplay === display ? (
                 <>View less <FontAwesomeIcon icon={faArrowRight} /></>
                 ) : (
-                <>{text}<FontAwesomeIcon icon={faArrowRight} /></>
+                <>{text} <FontAwesomeIcon icon={faArrowRight} /></>
                 )}
             </Typography>
         </Container>

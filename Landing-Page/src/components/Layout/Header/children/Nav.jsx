@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import {useLocation, useNavigate} from 'react-router-dom'
 import { Link } from "react-scroll";
 import { Container } from "@mui/material";
 import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
@@ -8,6 +9,8 @@ import Buttons from './buttons'
 import Logo from './Logo'
 
 function Nav({isMobile}) {
+    const location = useLocation();
+    const navigate = useNavigate();
     const {priorityDisplay, setPriorityDisplay} = usePriorityDisplay();
     const [menuOpen, setMenuOpen] = useState(false);
     const navItems = ["Search", "Property", "Services", "About Us"];
@@ -17,8 +20,14 @@ function Nav({isMobile}) {
     };
     
     const checklist = (link) => {
-        console.log(`i got ${link}`);
-        setMenuOpen(false); 
+        // This is a fallback to scroll to link incase <Link/> doesn't work
+        if (menuOpen){
+            setMenuOpen(false);
+        }
+        //To use the nav, one must be at /, if not, navigate to /
+        if (location.pathname !== `/`){
+            navigate(`/`);
+        }
         if (priorityDisplay != null){
             setPriorityDisplay(null);
             scrollIntoView(link);

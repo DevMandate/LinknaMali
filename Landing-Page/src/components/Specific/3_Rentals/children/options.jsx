@@ -11,8 +11,9 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import ProfilePicture from '../../../Common/ProfilePicture'
 
-function OptionsControl({ property }) {
-  const [likes, setLikes] = useState(property.likes); 
+
+export function OptionsPanel({ data }) {
+  const [likes, setLikes] = useState(data.likes); 
   const [isLiked, setIsLiked] = useState(false);
   const [isShared, setIsShared] = useState(false);
 
@@ -29,39 +30,45 @@ function OptionsControl({ property }) {
   const toggleShare = (event) => {
     event.stopPropagation();
     setIsShared(!isShared);
-    alert(`Property shared: ${property.name}`);
+    alert(`Property shared: ${data.name}`);
   };
+
+  return (
+    <Box className="flex items-center">
+      <div className="relative w-[25px] mr-[5px] flex justify-center ">
+        <FavoriteIcon
+          onClick={(event) => toggleLike(event)}
+          style={{
+            fontSize: 20,
+            color: isLiked ? "red" : "gray",
+          }}
+        />
+        {likes > 0 && (
+          <span className="absolute top-[-10px] right-[-10px] bg-red-500 text-white text-xs rounded-full px-[5px]">
+            {likes}
+          </span>
+        )}
+      </div>
+      <ShareIcon
+        onClick={(event) => toggleShare(event)}
+        style={{
+          fontSize: 18,
+          color: 'gray',
+          margin: '2px'
+        }}
+      />
+    </Box>
+  );
+}
+function OptionsControl({ data }) {
 
   return (
     <Box className="flex justify-between mb-[20px]" style={{ padding: '0px 5px 0px 10px' }}>
       <Box className='flex items-center'>
-        <ProfilePicture src={property.ownerImage} size={25}/>
-        <p className="text-sm ml-[5px]">{property.owner}</p>
+        <ProfilePicture src={data.ownerImage} size={25}/>
+        <p className="text-sm ml-[5px]">{data.owner}</p>
       </Box>  
-      <Box className="flex items-center">
-        <div className="relative w-[25px] mr-[5px] flex justify-center ">
-          <FavoriteIcon
-            onClick={(event) => toggleLike(event)}
-            style={{
-              fontSize: 20,
-              color: isLiked ? "red" : "gray",
-            }}
-          />
-          {likes > 0 && (
-            <span className="absolute top-[-10px] right-[-10px] bg-red-500 text-white text-xs rounded-full px-[5px]">
-              {likes}
-            </span>
-          )}
-        </div>
-        <ShareIcon
-          onClick={(event) => toggleShare(event)}
-          style={{
-            fontSize: 18,
-            color: 'gray',
-            margin: '2px'
-          }}
-        />
-      </Box>
+      <OptionsPanel data={data}/>
     </Box>
   );
 }
@@ -140,7 +147,7 @@ function PropertyGrid() {
             }}
           />
           <OptionsDisplay property={property}/>
-          <OptionsControl property={property}/>
+          <OptionsControl data={property}/>
         </Box>
       ))}
     </Container>

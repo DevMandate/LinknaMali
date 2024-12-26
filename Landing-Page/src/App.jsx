@@ -7,7 +7,7 @@ import LandingPageRoutes from './Routes/landingPageRoutes'
 import Footer from './components/Layout/Footer/footer'
 import './assets/styles/styles.css'
 import './assets/styles/theme.css'
-
+import './assets/styles/animation.css'
 function App() {
   return (
     <PriorityDisplayProvider>

@@ -12,7 +12,7 @@ const MyAccount = ({isMobile}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const { theme, toggleTheme } = useTheme();
-  const { isLoggedIn} = useLogin();
+  const { isLoggedIn, setIsLoggedIn} = useLogin();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -24,7 +24,10 @@ const MyAccount = ({isMobile}) => {
   const Profile = [{ Name: 'John Doe', email: 'johndoegmail.com' }]
   const DummyRoutes =[{ dummy: '/dummy', settings: '/settings', MyAccount: '/myaccount' }]
   const ProfileImage = ''
-
+  
+  const toggleLogin = () => {
+    setIsLoggedIn(!isLoggedIn);
+  };
   return (
     <React.Fragment>
       <Box 
@@ -120,7 +123,7 @@ const MyAccount = ({isMobile}) => {
               </ListItemIcon>
               View Portal
             </MenuItem>
-            <MenuItem onClick={() => { Navigate(DummyRoutes.dummy); handleClose(); }}>
+            <MenuItem onClick={() => { toggleLogin(); handleClose(); }}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>
