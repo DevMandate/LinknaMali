@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 import Grid from '@mui/material/Grid2';
 import properties from "./data/properties";
 import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
@@ -7,12 +8,14 @@ import { useMediaQuery, Typography, Box } from "@mui/material";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 function Options() {
-  const {priorityDisplay,setPriorityDisplay, setDetailsDisplay} = usePriorityDisplay();
+  const navigate = useNavigate();
+  const {priorityDisplay,setPriorityDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 910px)");
   const PropertiesResponsive = gridSize(isSmallScreen,priorityDisplay,'property', properties, 2,5);
   const handleProperty = (property) => {
     setPriorityDisplay('propertyDetails');
-    setDetailsDisplay(property);
+    const encodedName = encodeURIComponent(property.name.replace(/ /g, "-"));
+    navigate(`/property/${encodedName}`, { state: { property } });
   };
   return (
     <Grid container spacing={2} className=''

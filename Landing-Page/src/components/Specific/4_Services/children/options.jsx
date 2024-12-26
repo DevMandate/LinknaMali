@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 import { Container, Box, Typography, useMediaQuery } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -6,15 +7,17 @@ import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
 import {gridSize} from '../../../../utils/gridSize'
 import Services from './data/services';
 const Options = () => {
-    const {priorityDisplay} = usePriorityDisplay();
+    const navigate = useNavigate();
+    const {priorityDisplay,setPriorityDisplay} = usePriorityDisplay();
     const isSmallScreen = useMediaQuery("(max-width: 560px)");
     const ServicesResponsive = gridSize(isSmallScreen,priorityDisplay,'services', Services, 3,6);
 
-
-    
-    const handleServiceClick = (services) => {
-        alert(`You clicked on ${services.name}`);
-    }
+    const handleServiceClick = (service) => {
+        setPriorityDisplay('propertyDetails');
+        console.log(`i clicked ${service.name}`);
+        const encodedName = encodeURIComponent(service.name.replace(/ /g, "-"));
+        navigate(`/services/${encodedName}`, { state: { service } });
+    } 
     return (
         <Container
             className=''

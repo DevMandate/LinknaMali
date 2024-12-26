@@ -1,4 +1,5 @@
 import React,{useState} from "react";
+import { useNavigate } from "react-router-dom";
 import { Container,Box, useMediaQuery } from "@mui/material";
 import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
 import {gridSize} from '../../../../utils/gridSize'
@@ -90,7 +91,8 @@ function OptionsDisplay({ property }) {
 }
 
 function PropertyGrid() {
-  const {priorityDisplay, setPriorityDisplay, setDetailsDisplay} = usePriorityDisplay();
+  const navigate = useNavigate();
+  const {priorityDisplay, setPriorityDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 560px)");
   const propertiesResponsive = gridSize(isSmallScreen,priorityDisplay,'rentals', properties, 3,6);
   
@@ -99,7 +101,8 @@ function PropertyGrid() {
 
   function handlePropertyClick(property) {
     setPriorityDisplay('propertyDetails');
-    setDetailsDisplay(property);
+    const encodedName = encodeURIComponent(property.name.replace(/ /g, "-"));
+    navigate(`/property/${encodedName}`, { state: { property } });
   }
   return (
     <Container

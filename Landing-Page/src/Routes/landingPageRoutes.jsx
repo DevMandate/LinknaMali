@@ -6,7 +6,7 @@ function LandingPageRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Main />} />
-      <Route path="/details" element={<DetailsDisplay />} />
+      <Route path="/:type/:name" element={<DetailsDisplay />} />
     </Routes>
   );
 }
