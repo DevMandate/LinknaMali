@@ -18,10 +18,11 @@ function Details({detailsDisplay, images}){
                     }}
                 >
                     <Swiper images={images}/>
-                    <Box className="p-[20px] flex flex-col gap-2" 
+                    <Box className="div p-[20px] flex flex-col gap-2" 
                         sx={{
-                            width: '400px',
+                            minWidth: '400px',
                             '@media (max-width: 500px)': {
+                                minWidth: 'unset',
                                 width: 'auto',
                             }
                         }}>
