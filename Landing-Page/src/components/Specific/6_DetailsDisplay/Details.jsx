@@ -18,17 +18,36 @@ function Details({detailsDisplay, images}){
                     }}
                 >
                     <Swiper images={images}/>
-                    <div className="p-[20px] flex flex-col gap-2" style={{minWidth: '400px'}}>
+                    <Box className="p-[20px] flex flex-col gap-2" 
+                        sx={{
+                            width: '400px',
+                            '@media (max-width: 500px)': {
+                                width: 'auto',
+                            }
+                        }}>
                         <OptionsPanel data={detailsDisplay} iconSize={25} iconSpace={40}/>
-                        <Box className='flex items-center'>
+                        <Box className='flex items-center'
+                            sx={{
+                                '@media (max-width: 500px)': {
+                                    flexDirection: 'column',
+                                    alignItems: 'normal',
+                                    gap: 2,
+                                }
+                            }}
+                        >
+                            <Box className='flex items-center'>
                             <div className="w-[50px] h-[50px] mr-5">
                                 <img className="w-[100%] h-[100%] rounded-[50%]" style={{objectFit:'cover'}} src={detailsDisplay.ownerImage} />
                             </div>
-                            <Typography>{detailsDisplay.owner}</Typography>
+                            <Typography>{detailsDisplay.owner}</Typography></Box>
                             <Button
                                 variant="contained"
                                 color='secondary'
-                                sx={{marginLeft: 2}}
+                                sx={{marginLeft: 2,
+                                    '@media (max-width: 500px)': {
+                                        marginLeft: 0,
+                                    }
+                                }}
                                 endIcon={<PhoneIphone/>}
                             >Reach out</Button>
                         </Box>
@@ -47,7 +66,7 @@ function Details({detailsDisplay, images}){
                                 <strong>{key}:</strong> {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                             </Typography>
                         )))}
-                    </div>
+                    </Box>
                 </Box>
             </Box>
         )
