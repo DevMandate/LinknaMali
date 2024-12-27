@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Grid from '@mui/material/Grid2';
-import properties from "./data/properties";
+import cities from "./data/cities";
+import properties from '../../3_Rentals/data/properties';
 import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
 import {gridSize} from '../../../../utils/gridSize'
 import { useMediaQuery, Typography, Box } from "@mui/material";
@@ -11,11 +12,11 @@ function Options() {
   const navigate = useNavigate();
   const {priorityDisplay,setPriorityDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 910px)");
-  const PropertiesResponsive = gridSize(isSmallScreen,priorityDisplay,'property', properties, 2,5);
-  const handleProperty = (property) => {
+  const CitiesResponsive = gridSize(isSmallScreen,priorityDisplay,'property', cities, 2,5);
+  const handleProperty = (city) => {
     setPriorityDisplay('propertyDetails');
-    const encodedName = encodeURIComponent(property.name.replace(/ /g, "-"));
-    navigate(`/property/${encodedName}`, { state: { property } });
+    const encodedName = encodeURIComponent(city.name.replace(/ /g, "-"));
+    navigate(`/cities/${encodedName}`, { state: { properties, action: 'grid', Extra: city  } });
   };
   return (
     <Grid container spacing={2} className=''
@@ -23,12 +24,12 @@ function Options() {
             justifyContent: "center",
             padding: "20px",
         }}>
-      {PropertiesResponsive.map((property) => (
+      {CitiesResponsive.map((city) => (
         <Grid item
-         key={property.id}
+         key={city.id}
          sx={{position: 'relative', height:'auto'}}
-         ><img src={property.image} 
-            alt={property.name}
+         ><img src={city.image} 
+            alt={city.name}
             style={{ 
                 objectFit: 'cover',
                 width: '100%',
@@ -36,11 +37,11 @@ function Options() {
                 borderRadius:'10px',
                 boxShadow: "0 4px 6px rgba(0,0,0,0.1)", 
             }}
-            onClick={() => handleProperty(property)}
+            onClick={() => handleProperty(city)}
         />
         <Box sx={{position:'absolute', top:'10px', left:'10px', padding:2 ,color: 'var(--color-white)'}}>
-            <Typography>{property.name}</Typography>
-            <Typography>{property.listings} listings</Typography>
+            <Typography>{city.name}</Typography>
+            <Typography>{city.listings} listings</Typography>
         </Box>
         <LocationOnIcon sx={{ position:'absolute', bottom:'10px',left:'10px', fontSize: 30, color: 'white' }} />
         </Grid>

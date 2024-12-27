@@ -1,22 +1,22 @@
 import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { Container,Box, useMediaQuery } from "@mui/material";
-import {usePriorityDisplay} from '../../../../context/PriorityDisplay'
-import {gridSize} from '../../../../utils/gridSize'
-import properties from "./data/properties";
+import {usePriorityDisplay} from '../../../context/PriorityDisplay'
+import {gridSize} from '../../../utils/gridSize'
 import ShareIcon from '@mui/icons-material/Share';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BathtubIcon from '@mui/icons-material/Bathtub';
-import ProfilePicture from '../../../Common/ProfilePicture'
+import ProfilePicture from '../ProfilePicture'
 
 
-export function OptionsPanel({ data }) {
+export function OptionsPanel({ data, iconSize, iconSpace }) {
   const [likes, setLikes] = useState(data.likes); 
   const [isLiked, setIsLiked] = useState(false);
   const [isShared, setIsShared] = useState(false);
-
+  const size = iconSize ? iconSize : 20;
+  const margin = iconSpace ? iconSpace : 10;
   const toggleLike = (event) => { 
     event.stopPropagation();
     if (!isLiked) {
@@ -35,11 +35,13 @@ export function OptionsPanel({ data }) {
 
   return (
     <Box className="flex items-center">
-      <div className="relative w-[25px] mr-[5px] flex justify-center ">
+      <div className={`relative w-[25px] flex justify-center `}
+        style={{marginRight: `${margin}px`}}
+      >
         <FavoriteIcon
           onClick={(event) => toggleLike(event)}
           style={{
-            fontSize: 20,
+            fontSize: size,
             color: isLiked ? "red" : "gray",
           }}
         />
@@ -52,7 +54,7 @@ export function OptionsPanel({ data }) {
       <ShareIcon
         onClick={(event) => toggleShare(event)}
         style={{
-          fontSize: 18,
+          fontSize: size,
           color: 'gray',
           margin: '2px'
         }}
@@ -60,6 +62,7 @@ export function OptionsPanel({ data }) {
     </Box>
   );
 }
+
 function OptionsControl({ data }) {
 
   return (
@@ -97,20 +100,26 @@ function OptionsDisplay({ property }) {
   );
 }
 
-function PropertyGrid() {
+function PropertyGrid({properties, gridSizeOverride, append}) {
   const navigate = useNavigate();
   const {priorityDisplay, setPriorityDisplay} = usePriorityDisplay();
   const isSmallScreen = useMediaQuery("(max-width: 560px)");
-  const propertiesResponsive = gridSize(isSmallScreen,priorityDisplay,'rentals', properties, 3,6);
+  const propertiesResponsive = gridSizeOverride ? properties : gridSize(isSmallScreen,priorityDisplay,'rentals', properties, 3,6);
   
   const isImageHeight = useMediaQuery("(max-width: 1000px)");
   const ImageHeight = isImageHeight ? "100px" : "200px";
 
-  function handlePropertyClick(property) {
+  function handlePropertyClick(property, append = false) {
     setPriorityDisplay('propertyDetails');
     const encodedName = encodeURIComponent(property.name.replace(/ /g, "-"));
-    navigate(`/property/${encodedName}`, { state: { property } });
-  }
+    const currentPath = window.location.pathname;
+  
+    const newPath = append 
+      ? `${currentPath}/properties/${encodedName}` 
+      : `/property/${encodedName}`;
+  
+    navigate(newPath, { state: { property, action: 'details' } });
+  }  
   return (
     <Container
       className=''
@@ -129,7 +138,7 @@ function PropertyGrid() {
       {propertiesResponsive.map((property) => (
         <Box
           key={property.id}
-          onClick={() => handlePropertyClick(property)}
+          onClick={() => handlePropertyClick(property, append)}
           sx={{
             borderRadius: "5px",
             overflow: "hidden",

@@ -11,7 +11,7 @@ import {
   owner4,
   owner5,
   owner6, 
-} from '../../../../../assets/images';
+} from '../../../../assets/images';
 
 const properties = [
   {

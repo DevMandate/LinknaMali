@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { omit } from 'lodash';
 import { Container, Box, Typography, useMediaQuery } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -16,8 +17,14 @@ const Options = () => {
         setPriorityDisplay('propertyDetails');
         console.log(`i clicked ${service.name}`);
         const encodedName = encodeURIComponent(service.name.replace(/ /g, "-"));
-        navigate(`/services/${encodedName}`, { state: { service } });
-    } 
+        const serviceWithoutIcon = omit(service, 'icon');
+        navigate(`/services/${encodedName}`, {
+            state: {
+                serviceWithoutIcon,
+                action: 'service',
+            }
+        });
+    }  
     return (
         <Container
             className=''

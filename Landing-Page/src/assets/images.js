@@ -18,6 +18,12 @@ import Kisumu from './images/content/Property/property/Kisumu.png'
 import Mombasa from './images/content/Property/property/Mombasa.png'
 import Nakuru from './images/content/Property/property/Nakuru.png'
 import Kiambu from './images/content/Property/property/Kiambu.png'
+import room1 from './images/content/Property/rooms/room1.jpg'
+import room2 from './images/content/Property/rooms/room2.jpg'
+import room3 from './images/content/Property/rooms/room3.jpg'
+import room4 from './images/content/Property/rooms/room4.jpg'
+import room5 from './images/content/Property/rooms/room5.jpg'
+import room6 from './images/content/Property/rooms/room6.jpg'
 export {
     LinknaMali,
     Hero,
@@ -39,4 +45,10 @@ export {
     Mombasa,
     Nakuru,
     Kiambu,
+    room1,
+    room2,
+    room3,
+    room4,
+    room5,
+    room6,
 }

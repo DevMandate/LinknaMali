@@ -2,8 +2,9 @@ import React from "react";
 import { Box} from "@mui/material";
 import {usePriorityDisplay} from '../../../context/PriorityDisplay'
 import PriorityDisplayControl from '../../Common/PriorityDisplayControl';
+import properties from './data/properties';
 import Heading from '../../Common/heading'
-import Options from './children/options'
+import SearchResults from '../../Common/Search/searchResults'
 function Property() {
     const {priorityDisplay} = usePriorityDisplay();
     const Title = 'Featured Rentals & Airbnbs';
@@ -21,7 +22,7 @@ function Property() {
         >
             <Heading title={Title} subtitle={Subtitle}/>
             <PriorityDisplayControl display='rentals' text='View more'/>    
-            <Options/>
+            <SearchResults properties={properties}/>
         </Box>
     );
 }
