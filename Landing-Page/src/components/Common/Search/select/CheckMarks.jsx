@@ -42,7 +42,11 @@ export default function MultipleSelectCheckmarks() {
           },
           '& .MuiSvgIcon-root' :{
             fill: 'var(--MUI-input)',
+          },
+          '&  .MuiOutlinedInput-input': {
+            color: 'var(--MUI-input)',
           }
+
         }}>
         <InputLabel id="demo-multiple-checkbox-label">Property Type</InputLabel>
         <Select

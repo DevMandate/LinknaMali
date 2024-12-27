@@ -24,6 +24,9 @@ export default function BasicSelect() {
           '& .MuiSvgIcon-root' :{
             fill: 'var(--MUI-input)',
           },
+          '& .MuiOutlinedInput-input ,': {
+            color: 'var(--MUI-input)',
+          },
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
               borderColor: '',
