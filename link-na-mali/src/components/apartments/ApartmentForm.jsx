@@ -1,0 +1,149 @@
+import React, { useState } from 'react';
+import Amenities from '../amenities';
+import Button from '../button';
+
+const ApartmentForm = ({ addProperty }) => {
+  const [propertyName, setPropertyName] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [price, setPrice] = useState('');
+  const [availabilityStatus, setAvailabilityStatus] = useState('');
+  const [size, setSize] = useState('');
+  const [purpose, setPurpose] = useState('');
+  const [floor_number, setFloor_number] = useState('');
+  const [number_of_bedrooms, setNumber_of_bedrooms] = useState('');
+  const [number_of_bathrooms, setNumber_of_bathrooms] = useState('');
+  const [amenities, setAmenities] = useState([]);
+  const [image, setImage] = useState(null);
+  const [document, setDocument] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addProperty({
+      propertyName,
+      description,
+      location,
+      price,
+      availabilityStatus,
+      size,
+      purpose,
+      floor_number,
+      number_of_bedrooms,
+      number_of_bathrooms,
+      amenities,
+      image,
+      document,
+    });
+    setPropertyName('');
+    setDescription('');
+    setLocation('');
+    setPrice('');
+    setAvailabilityStatus('');
+    setSize('');
+    setPurpose('');
+    setFloor_number('');
+    setNumber_of_bedrooms('');
+    setNumber_of_bathrooms('');
+    setAmenities([]);
+    setImage(null);
+    setDocument(null);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-black">
+      <input
+        type="text"
+        value={propertyName}
+        onChange={(e) => setPropertyName(e.target.value)}
+        placeholder="Property"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <input
+        type="text"
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+        placeholder="Location"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <input
+        type="number"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        placeholder="Price"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <input
+        type="text"
+        value={availabilityStatus}
+        onChange={(e) => setAvailabilityStatus(e.target.value)}
+        placeholder="Availability Status"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <input
+        type="text"
+        value={size}
+        onChange={(e) => setSize(e.target.value)}
+        placeholder="Size"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <input
+        type="text"
+        value={purpose}
+        onChange={(e) => setPurpose(e.target.value)}
+        placeholder="Purpose"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <input
+        type="text"
+        value={floor_number}
+        onChange={(e) => setFloor_number(e.target.value)}
+        placeholder="Floor Number"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <input
+        type="text"
+        value={number_of_bedrooms}
+        onChange={(e) => setNumber_of_bedrooms(e.target.value)}
+        placeholder="Number of Bedrooms"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <input
+        type="text"
+        value={number_of_bathrooms}
+        onChange={(e) => setNumber_of_bathrooms(e.target.value)}
+        placeholder="Number of Bathrooms"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+      />
+      <div className="col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-gray-700">Upload Image</label>
+          <input
+            type="file"
+            onChange={(e) => setImage(e.target.files[0])}
+            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700">Upload Document</label>
+          <input
+            type="file"
+            onChange={(e) => setDocument(e.target.files[0])}
+            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+          />
+        </div>
+      </div>
+      <textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Description"
+        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 col-span-3 h-32 resize-none bg-white"
+      />
+      <Amenities selectedAmenities={amenities} setSelectedAmenities={setAmenities} />
+      <div className="col-span-3 flex justify-center">
+        <Button type="submit">Add to Listing</Button>
+      </div>
+    </form>
+  );
+};
+
+export default ApartmentForm;
