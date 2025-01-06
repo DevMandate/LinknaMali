@@ -13,6 +13,7 @@ import pymysql.cursors
 import jwt
 import datetime  # For token expiration
 import os
+import uuid
 
 
 
@@ -31,11 +32,11 @@ CORS(app)
 # 1. USER REGISTER
 class UserRegister(Resource):
     def post(self):
-        # step 1: DB Connection and Cursor
+        # Step 1: DB Connection and Cursor
         connection = db_connection()
         cursor = connection.cursor()
 
-        # step 2: Request data
+        # Step 2: Request data
         data = request.json
         first_name = data['first_name']
         last_name = data['last_name']
@@ -46,24 +47,28 @@ class UserRegister(Resource):
         password2 = data['password2']
         role = data['role']
 
+        # Generate a unique UUID for user_id
+        user_id = str(uuid.uuid4())
+
+        # Hash the password
         hashed_password = hashpassword(password1)
 
+        # Validate password match and length
         if password1 != password2:
             return jsonify({'response': 'Passwords do not match'})
         elif len(password1) < 6:
             return jsonify({'response': 'Password length must be more than six'})
-        
-        # d. Write SQL to insert data
-        sql = "INSERT INTO users(first_name, last_name, id_number, email, phone_number, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
+        # SQL to insert data
+        sql = "INSERT INTO users(user_id, first_name, last_name, id_number, email, phone_number, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        data = (user_id, first_name, last_name, id_number, email, phone_number, hashed_password, role)
 
-        data = (first_name, last_name, id_number, email, phone_number, hashed_password, role)
-
-
-        # e. Execute cursor and return response
+        # Execute cursor and return response
         cursor.execute(sql, data)
         connection.commit()
-        return jsonify ({'response': 'User registered successfully'})
+
+        return jsonify({'response': 'User registered successfully', 'user_id': user_id})
+
 
 
 class UserLogin(Resource):
@@ -452,7 +457,7 @@ class GetFavorites(Resource):
 
 # Set the path to the images folder inside the static directory
 app.config['UPLOAD_FOLDER'] = 'static/images'
-app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+
 
 # Function to check allowed file extensions for images
 def allowed_file(filename):
@@ -460,13 +465,11 @@ def allowed_file(filename):
 
 # Add Apartment API
 UPLOAD_FOLDER = "static/images/"
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 class AddApartment(Resource):
     def post(self):
+        connection = None
+        cursor = None
         try:
             # Ensure the images folder exists
             if not os.path.exists(UPLOAD_FOLDER):
@@ -478,8 +481,6 @@ class AddApartment(Resource):
 
             image = request.files["image"]
 
-            if not allowed_file(image.filename):
-                return jsonify({"message": "Invalid file type. Allowed types are png, jpg, jpeg, gif."})
 
             # Secure the filename
             filename = secure_filename(image.filename)
@@ -493,16 +494,20 @@ class AddApartment(Resource):
             description = request.form.get("description")
             location = request.form.get("location")
             price = request.form.get("price")
+            purpose = request.form.get("purpose")
+            size = request.form.get("size")
             floor_number = request.form.get("floor_number")
             number_of_bedrooms = request.form.get("number_of_bedrooms")
             number_of_bathrooms = request.form.get("number_of_bathrooms")
-            furnished = request.form.get("furnished")
-            balcony = request.form.get("balcony")
-            parking = request.form.get("parking")
+            amenities = request.form.get("amenities")
+
+            # Generate a unique UUID for apartment_id
+            apartment_id = str(uuid.uuid4())
+
 
             # Validate required fields
-            if not all([user_id, title, floor_number, number_of_bedrooms, number_of_bathrooms, furnished, balcony, parking]):
-                return jsonify({"message": "Missing required fields. Please include property_id, title, floor_number, number_of_bedrooms, number_of_bathrooms, furnished, balcony, and parking."})
+            if not all([user_id, title, floor_number, number_of_bedrooms, number_of_bathrooms, amenities]):
+                return jsonify({"message": "Missing required fields. Please include property_id, title, floor_number, number_of_bedrooms, number_of_bathrooms, amenities"})
 
             # DB connection
             connection = db_connection()
@@ -510,29 +515,26 @@ class AddApartment(Resource):
 
             # Insert data into the database
             sql = """
-                INSERT INTO apartments (user_id, title, description, location, price, floor_number, number_of_bedrooms, number_of_bathrooms, furnished, balcony, parking, image)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO apartments (apartment_id, user_id, title, description, location, price, purpose, size, floor_number, number_of_bedrooms, number_of_bathrooms, amenities, image)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
-            values = (user_id, title, description, location, price, floor_number, number_of_bedrooms, number_of_bathrooms, furnished, balcony, parking, filename)
+            values = (apartment_id, user_id, title, description, location, price, purpose, size, floor_number, number_of_bedrooms, number_of_bathrooms, amenities, filename)
             cursor.execute(sql, values)
             connection.commit()
 
             # Response
-            return jsonify({"message": "Apartment added successfully", "apartment_id": cursor.lastrowid})
+            return jsonify({"message": "Apartment added successfully", "apartment_id": apartment_id})
 
         except Exception as e:
             return jsonify({"message": "An error occurred while adding the apartment", "error": str(e)})
 
         finally:
-            # Close the DB connection
-            if connection:
+            # Close the DB connection and cursor safely
+            if cursor:
                 cursor.close()
-                connection.close()
-
-
-            # Close the DB connection if it exists
             if connection:
                 connection.close()
+
 
 
 
@@ -618,6 +620,8 @@ class GetApartment(Resource):
 # Add House Route
 class AddHouse(Resource):
     def post(self):
+        connection = None  # Initialize connection to None
+        cursor = None  # Initialize cursor to None
         try:
             # Ensure the images folder exists
             if not os.path.exists(UPLOAD_FOLDER):
@@ -629,8 +633,6 @@ class AddHouse(Resource):
 
             image = request.files["image"]
 
-            if not allowed_file(image.filename):
-                return jsonify({"message": "Invalid file type. Allowed types are png, jpg, jpeg, gif."})
 
             # Secure the filename
             filename = secure_filename(image.filename)
@@ -644,20 +646,18 @@ class AddHouse(Resource):
             description = request.form.get("description")
             number_of_bedrooms = request.form.get("number_of_bedrooms")
             number_of_bathrooms = request.form.get("number_of_bathrooms")
-            furnished = request.form.get("furnished")
-            balcony = request.form.get("balcony")
-            parking = request.form.get("parking")
-            garden = request.form.get("garden")
-            swimming_pool = request.form.get("swimming_pool")
+            amenities = request.form.get("amenities")
             location = request.form.get("location")
             price = request.form.get("price")
             size_in_acres = request.form.get("size_in_acres")
-            additional_amenities = request.form.get("additional_amenities")
+            purpose = request.form.get("purpose")
+
+            # Generate a unique UUID for house
+            house_id = str(uuid.uuid4())
 
             # Validate required fields
             if not all([
-                user_id, title, number_of_bedrooms, number_of_bathrooms, furnished, 
-                balcony, parking, garden, swimming_pool, location, size_in_acres
+                user_id, title, number_of_bedrooms, number_of_bathrooms, amenities, location, size_in_acres
             ]):
                 return jsonify({"message": "Missing required fields. Please include all required fields."})
 
@@ -668,31 +668,30 @@ class AddHouse(Resource):
             # Insert data into the database
             sql = """
                 INSERT INTO houses (
-                    user_id, title, description, number_of_bedrooms, number_of_bathrooms, 
-                    furnished, balcony, parking, garden, swimming_pool, image, 
-                    location, price, size_in_acres, additional_amenities
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    house_id, user_id, title, description, number_of_bedrooms, number_of_bathrooms, 
+                    amenities, image, location, price, size_in_acres, purpose)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
-                user_id, title, description, number_of_bedrooms, number_of_bathrooms, 
-                furnished, balcony, parking, garden, swimming_pool, filename, 
-                location, price, size_in_acres, additional_amenities
-            )
+                house_id, user_id, title, description, number_of_bedrooms, number_of_bathrooms, 
+                amenities, filename, location, price, size_in_acres, purpose)
+
             cursor.execute(sql, values)
             connection.commit()
 
             # Response
-            return jsonify({"message": "House added successfully", "house_id": cursor.lastrowid})
+            return jsonify({"message": "House added successfully", "house_id": house_id})
 
         except Exception as e:
             return jsonify({"message": "An error occurred while adding the house", "error": str(e)})
 
         finally:
-            # Close the DB connection
-            if connection:
+            # Close the DB connection safely
+            if cursor:
                 cursor.close()
+            if connection:
                 connection.close()
+
 
 
 # Get HSE class
@@ -783,9 +782,11 @@ class AddLand(Resource):
         land_type = request.form.get("land_type")
         location = request.form.get("location")
         price = request.form.get("price")
-        zoning_status = request.form.get("zoning_status", "un-zoned")
-        utilities_available = request.form.get("utilities_available", "No")
-        land_access = request.form.get("land_access", "good")
+        purpose = request.form.get("purpose")
+        amenities = request.form.get("amenities")
+
+        # Generate a unique UUID for land_id
+        land_id = str(uuid.uuid4())
         
         # Handle image upload
         image = request.files.get("image")
@@ -807,10 +808,10 @@ class AddLand(Resource):
 
         # Insert data into the database
         sql = """
-            INSERT INTO land (user_id, title, description, land_size, land_type, location, price, zoning_status, utilities_available, land_access, image)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO land (land_id, user_id, title, description, land_size, land_type, location, price, purpose, amenities, image)
+            VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        values = (user_id, title, description, land_size, land_type, location, price, zoning_status, utilities_available, land_access, image.filename)
+        values = (land_id,user_id, title, description, land_size, land_type, location, price, purpose, amenities, image.filename)
         cursor.execute(sql, values)
         connection.commit()
 
@@ -819,7 +820,7 @@ class AddLand(Resource):
         connection.close()
 
         # Response
-        return jsonify({"message": "Land added successfully", "land_id": cursor.lastrowid})
+        return jsonify({"message": "Land added successfully", "land_id":land_id})
 
 
 # Get land route
@@ -915,11 +916,15 @@ class AddCommercial(Resource):
         commercial_size = request.form.get("commercial_size")
         price = request.form.get("price")
         location = request.form.get("location")
-        parking_space = request.form.get("parking_space", "No")
-        utilities_available = request.form.get("utilities_available", "")
-        other_utilities = request.form.get("other_utilities", None)
-        commercial_type = request.form.get("commercial_type", "office")
+        purpose = request.form.get("purpose")
+        size = request.form.get("size")
+        commercial_type = request.form.get("commercial_type")
+        amenities = request.form.get("amenities")
         
+        # Generate a unique UUID for commercial_id
+        commercial_id = str(uuid.uuid4())
+
+
         # Handle image upload
         image = request.files.get("image")
       
@@ -932,7 +937,7 @@ class AddCommercial(Resource):
             return jsonify({"message": "Missing image file."})
 
         # Validate required fields
-        if not all([user_id, title, commercial_size, price, location, parking_space, utilities_available, commercial_type]):
+        if not all([user_id, title, commercial_size, price, location, commercial_type, amenities]):
             return jsonify({"message": "Missing required fields. Please include property_id, title, commercial_size, price, location, parking_space, utilities_available, and commercial_type."})
 
         # DB connection
@@ -942,20 +947,17 @@ class AddCommercial(Resource):
         # Insert data into the commercials table
         sql = """
             INSERT INTO commercial (
-                user_id, title, description, commercial_size, price, location, 
-                parking_space, utilities_available, other_utilities, commercial_type, image
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                commercial_id, user_id, title, description, commercial_size, price, location, purpose, size, commercial_type, amenities, image)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         values = (
-            user_id, title, description, commercial_size, price, location,
-            parking_space, utilities_available, other_utilities, commercial_type, image
-        )
+            commercial_id, user_id, title, description, commercial_size, price, location,
+            purpose, size, commercial_type, amenities, image)
+
         cursor.execute(sql, values)
         connection.commit()
 
         # Response
-        commercial_id = cursor.lastrowid
         cursor.close()
         connection.close()
 
