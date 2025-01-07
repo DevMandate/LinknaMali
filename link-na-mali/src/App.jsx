@@ -1,15 +1,15 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import Login from './components/login/Login';
-import Signup from './components/register/Signup';
-import Dashboard from './pages/dashboard/Dashboard';
-import PropertyManagement from './components/property/PropertyManager';
-import LeadManagement from './components/lead/LeadManager';
-import ProfileManagement from './components/profile/ProfileManager';
-import ReportsAnalytics from './components/analytics/Analytics';
-import Support from './components/support/Support';
-import Settings from './components/settings/Settings';
-import Logout from './components/logout/Logout';
+import Login from './components/login'
+import Signup from './components/register'
+import Dashboard from './pages/dashboard'
+import PropertyManagement from './components/property'
+import LeadManagement from './components/lead'
+import ProfileManagement from './components/profile'
+import ReportsAnalytics from './components/analytics'
+import Support from './components/support'
+import Settings from './components/settings'
+import Logout from './components/logout'
 
 function App() {
   return (

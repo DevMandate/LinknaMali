@@ -64,11 +64,6 @@ const CommercialForm = ({ addProperty }) => {
         className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
       />
       <input
-        type="file"
-        onChange={(e) => setImage(e.target.files[0])}
-        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-      />
-      <input
         type="text"
         value={availabilityStatus}
         onChange={(e) => setAvailabilityStatus(e.target.value)}
@@ -96,6 +91,24 @@ const CommercialForm = ({ addProperty }) => {
         placeholder="Commercial Type"
         className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
       />
+      <div className="col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-gray-700">Upload Image</label>
+          <input
+            type="file"
+            onChange={(e) => setImage(e.target.files[0])}
+            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700">Upload Document</label>
+          <input
+            type="file"
+            onChange={(e) => setDocument(e.target.files[0])}
+            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+          />
+        </div>
+      </div>
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
