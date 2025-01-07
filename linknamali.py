@@ -22,6 +22,11 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
+# Default Route
+@app.route('/')
+def home():
+    return 'Welcome to LinkNamali'b
+
 # 1. USER REGISTER
 class UserRegister(Resource):
     def post(self):
