@@ -162,209 +162,6 @@ class ProtectedResource(Resource):
 
 
 
-# Retrieve Properties
-class GetProperty(Resource):
-    def post(self):  # Change to POST if using JSON input
-        # Step 1: Get the input JSON body
-        data = request.get_json()
-        property_id = data.get('property_id')  # Extract property_id from the JSON body
-        
-        # Step 2: DB Connection and Cursor
-        connection = db_connection()
-        cursor = connection.cursor(pymysql.cursors.DictCursor)
-        
-        # Step 3: Construct and execute SQL query
-        if property_id:
-            sql = "SELECT * FROM properties WHERE property_id = %s"
-            cursor.execute(sql, (property_id,))
-        else:
-            return jsonify({"message": "Property ID is required"})
-        
-        # Step 4: Check if any records exist
-        if cursor.rowcount == 0:
-            return jsonify({"message": "No records found"})
-        else:
-            property_details = cursor.fetchone()
-            return jsonify(property_details)
-
-
-
-# Add Property API
-class AddProperty(Resource):
-    def post(self):
-        try:
-            # Step 1: Parse the request JSON data
-            data = request.get_json()
-            
-            # Extract property fields
-            owner_id = data.get('owner_id')
-            title = data.get('title')
-            description = data.get('description')
-            location = data.get('location')
-            price = data.get('price')
-            property_type = data.get('property_type')
-            availability_status = data.get('availability_status', 'available')  # Default to 'available'
-
-            # Validate required fields
-            if not all([owner_id, title, location, price, property_type]):
-                return jsonify({"message": "Missing required fields. Please include owner_id, title, location, price, and property_type."})
-
-            # Step 2: DB Connection and Cursor
-            connection = db_connection()
-            cursor = connection.cursor()
-
-            # Step 3: Insert SQL Query
-            sql = """
-                INSERT INTO properties (owner_id, title, description, location, price, property_type, availability_status)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """
-            values = (owner_id, title, description, location, price, property_type, availability_status)
-
-            # Execute the query
-            cursor.execute(sql, values)
-            connection.commit()
-
-            # Step 4: Response
-            return jsonify({"message": "Property added successfully", "property_id": cursor.lastrowid})
-
-        except Exception as e:
-            return jsonify({"message": "An error occurred while adding the property", "error": str(e)})
-        finally:
-            # Step 5: Close DB Connection
-            if connection:
-                cursor.close()
-                connection.close()
-
-
-# Retrieve Property by Type
-class GetPropertiesByType(Resource):
-    def post(self):
-        # Step 1: Get the input JSON body (expects the property_type field)
-        data = request.get_json()
-        property_type = data.get('property_type')
-
-        # Step 2: Validate the input
-        if not property_type:
-            return jsonify({"message": "Property type is required"})
-
-        # Step 3: DB Connection and Cursor
-        connection = db_connection()
-        cursor = connection.cursor(pymysql.cursors.DictCursor)
-
-        # Step 4: Construct and execute SQL query to get properties based on the type
-        sql = "SELECT * FROM properties WHERE property_type = %s"
-        cursor.execute(sql, (property_type,))
-        
-        # Step 5: Check if any records exist
-        properties = cursor.fetchall()
-        if len(properties) == 0:
-            return jsonify({"message": "No properties found for the given type"})
-
-        # Step 6: Return the properties as a JSON response
-        return jsonify({"properties": properties})
-
-
-# Retrieve property by Amenity
-class GetPropertyWithAmenity(Resource):
-    def post(self):  # Change to POST if using JSON input
-        # Step 1: Get the input JSON body
-        data = request.get_json()
-        amenity_name = data.get('amenity_name')  # Extract amenity_name from the JSON body
-        
-        if not amenity_name:
-            return jsonify({"message": "Amenity name is required"})
-        
-        # Step 2: DB Connection and Cursor
-        connection = db_connection()
-        cursor = connection.cursor(pymysql.cursors.DictCursor)
-        
-        try:
-            # Step 3: Construct and execute SQL query
-            sql = """
-                SELECT a.amenity_name, a.amenity_category, a.amenity_description, p.*
-                FROM amenities a
-                JOIN property_specific_amenities psa ON psa.amenity_id = a.amenity_id
-                JOIN properties p ON psa.property_id = p.property_id
-                WHERE a.amenity_name = %s
-            """
-            cursor.execute(sql, (amenity_name,))
-            
-            # Step 4: Check if any records exist
-            if cursor.rowcount == 0:
-                return jsonify({"message": "No properties found with the requested amenity"})
-            else:
-                # Fetch the result
-                result = cursor.fetchall()
-                
-                # Combine amenity and property details into one response
-                properties_with_amenity = []
-                for row in result:
-                    properties_with_amenity.append({
-                        'property_id': row['property_id'],
-                        'owner_id': row['owner_id'],
-                        'title': row['title'],
-                        'description': row['description'],
-                        'location': row['location'],
-                        'price': row['price'],
-                        'property_type': row['property_type'],
-                        'availability_status': row['availability_status'],
-                        'amenity_name': row['amenity_name'],
-                        'amenity_category': row['amenity_category'],
-                        'amenity_description': row['amenity_description']
-                    })
-                return jsonify(properties_with_amenity)
-
-        except Exception as e:
-            return jsonify({"message": "An error occurred", "error": str(e)})
-
-        finally:
-            # Step 5: Close DB Connection
-            if connection:
-                cursor.close()
-                connection.close()
-
-
-# Delete Property API
-class DeleteProperty(Resource):
-    def delete(self):
-        try:
-            # Step 1: Parse the request JSON data
-            data = request.get_json()
-
-            # Extract property_id from the request
-            property_id = data.get('property_id')
-
-            # Validate the input
-            if not property_id:
-                return {"message": "Property ID is required"}, 400
-
-            # Step 2: DB Connection and Cursor
-            connection = db_connection()
-            cursor = connection.cursor()
-
-            # Step 3: Delete SQL Query
-            sql = "DELETE FROM properties WHERE property_id = %s"
-
-            # Execute the query
-            cursor.execute(sql, (property_id,))
-            connection.commit()
-
-            # Check if any rows were affected
-            if cursor.rowcount == 0:
-                return {"message": "No property found with the provided ID"}, 404
-
-            # Step 4: Success Response
-            return {"message": f"Property with ID {property_id} has been deleted successfully"}, 200
-
-        except Exception as e:
-            return {"message": "An error occurred", "error": str(e)}, 500
-
-        finally:
-            # Step 5: Close DB Connection
-            if connection:
-                cursor.close()
-                connection.close()
-
 
 # Save to favourite api
 class SaveToFavorites(Resource):
@@ -1163,6 +960,62 @@ class NewListings(Resource):
                 connection.close()
 
 
+# Search Listings
+class SearchListings(Resource):
+    def get(self):
+        connection = None
+        cursor = None
+        try:
+            # Get query parameters
+            query = request.args.get("query", "")
+            if not query:
+                return jsonify({"message": "Search query is required."})
+
+            # DB connection
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # SQL Query to search across multiple tables
+            search_query = f"""
+                SELECT 'apartment' AS category, apartment_id AS id, title, description, location, price, amenities, image
+                FROM apartments
+                WHERE title LIKE %s OR location LIKE %s OR description LIKE %s OR price LIKE %s OR amenities LIKE %s
+                UNION ALL
+                SELECT 'house' AS category, house_id AS id, title, description, location, price, amenities, image
+                FROM houses
+                WHERE title LIKE %s OR location LIKE %s OR description LIKE %s OR price LIKE %s OR amenities LIKE %s
+                UNION ALL
+                SELECT 'land' AS category, land_id AS id, title, description, location, price, amenities, image
+                FROM land
+                WHERE title LIKE %s OR location LIKE %s OR description LIKE %s OR price LIKE %s OR amenities LIKE %s
+                UNION ALL
+                SELECT 'commercial' AS category, commercial_id AS id, title, description, location, price, amenities, image
+                FROM commercial
+                WHERE title LIKE %s OR location LIKE %s OR description LIKE %s OR price LIKE %s OR amenities LIKE %s
+            """
+
+            # Use wildcards for LIKE
+            wildcard_query = f"%{query}%"
+            values = [wildcard_query] * 20  # 5 columns x 4 tables
+
+            # Execute query
+            cursor.execute(search_query, values)
+            results = cursor.fetchall()
+
+            # Response
+            return jsonify({"message": "Search results fetched successfully", "data": results})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred during the search", "error": str(e)})
+
+        finally:
+            # Close DB connection and cursor
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
+
 
 
 
@@ -1176,11 +1029,6 @@ api.add_resource(Default, '/')
 api.add_resource(UserRegister, '/user_register')
 api.add_resource(UserLogin, '/user_login')
 api.add_resource(ProtectedResource, '/protected')
-api.add_resource(GetProperty, '/get_property')
-api.add_resource(AddProperty, '/add_property')
-api.add_resource(GetPropertiesByType, '/get_properties_by_type')
-api.add_resource(GetPropertyWithAmenity, '/properties/amenity')
-api.add_resource(DeleteProperty, '/delete_property')
 api.add_resource(SaveToFavorites, '/savetofavourites')
 api.add_resource(GetFavorites, '/getfavorites')
 api.add_resource(AddApartment, '/addapartment')
@@ -1193,6 +1041,7 @@ api.add_resource(AddCommercial, '/addcommercial')
 api.add_resource(GetCommercial, '/getcommercial')
 api.add_resource(ServiceRequest, '/service-request')
 api.add_resource(NewListings, '/new-listings')
+api.add_resource(SearchListings, '/search-listings')
 
 
 
