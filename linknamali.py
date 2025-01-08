@@ -29,6 +29,15 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
+
+# Default Route
+class Default(Resource):
+    def get(self):
+        return {'response': 'Welcome to LinkNamali'}
+
+
+
+
 # 1. USER REGISTER
 class UserRegister(Resource):
     def post(self):
@@ -1083,6 +1092,76 @@ class ServiceRequest(Resource):
             return {"message": f"An error occurred: {str(e)}"}, 500
 
 
+# New Listings Route
+class NewListings(Resource):
+    def get(self):
+        connection = None
+        cursor = None
+        try:
+            # Establish database connection
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Fetch new listings from apartments
+            cursor.execute("""
+                SELECT apartment_id AS id, title, description, location, price, image, 'apartment' AS category
+                FROM apartments
+                ORDER BY created_at DESC
+                LIMIT 5
+            """)
+            apartments = cursor.fetchall()
+
+            # Fetch new listings from houses
+            cursor.execute("""
+                SELECT house_id AS id, title, description, location, price, image, 'house' AS category
+                FROM houses
+                ORDER BY created_at DESC
+                LIMIT 5
+            """)
+            houses = cursor.fetchall()
+
+            # Fetch new listings from land
+            cursor.execute("""
+                SELECT land_id AS id, title, description, location, price, image, 'land' AS category
+                FROM land
+                ORDER BY created_at DESC
+                LIMIT 5
+            """)
+            land = cursor.fetchall()
+
+            # Fetch new listings from commercial
+            cursor.execute("""
+                SELECT commercial_id AS id, title, description, location, price, image, 'commercial' AS category
+                FROM commercial
+                ORDER BY created_at DESC
+                LIMIT 5
+            """)
+            commercial = cursor.fetchall()
+
+            # Combine all results into a categorized dictionary
+            data = {
+                "apartments": apartments,
+                "houses": houses,
+                "land": land,
+                "commercial": commercial,
+            }
+
+            # Return as JSON
+            return jsonify({
+                "message": "New listings fetched successfully",
+                "data": data
+            })
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred", "error": str(e)})
+
+        finally:
+            # Close database connection
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
 
 
 
@@ -1093,6 +1172,7 @@ class ServiceRequest(Resource):
 
 
 # Endpoints
+api.add_resource(Default, '/')
 api.add_resource(UserRegister, '/user_register')
 api.add_resource(UserLogin, '/user_login')
 api.add_resource(ProtectedResource, '/protected')
@@ -1112,6 +1192,8 @@ api.add_resource(GetLand, '/getland')
 api.add_resource(AddCommercial, '/addcommercial')
 api.add_resource(GetCommercial, '/getcommercial')
 api.add_resource(ServiceRequest, '/service-request')
+api.add_resource(NewListings, '/new-listings')
+
 
 
 
