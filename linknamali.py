@@ -261,16 +261,8 @@ class GetFavorites(Resource):
 
 # Add Apartment Route
 
-# Set the path to the images folder inside the static directory
-app.config['UPLOAD_FOLDER'] = 'static/images'
-
-
-# Function to check allowed file extensions for images
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
-# Add Apartment API
 UPLOAD_FOLDER = "static/images/"
+UPLOAD_FOLDER_DOCS = "static/documents/"
 
 class AddApartment(Resource):
     def post(self):
@@ -280,6 +272,8 @@ class AddApartment(Resource):
             # Ensure the images folder exists
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
+            if not os.path.exists(UPLOAD_FOLDER_DOCS):
+                os.makedirs(UPLOAD_FOLDER_DOCS)
 
             # Parse form data
             if "image" not in request.files:
@@ -315,16 +309,33 @@ class AddApartment(Resource):
             if not all([user_id, title, floor_number, number_of_bedrooms, number_of_bathrooms, amenities]):
                 return jsonify({"message": "Missing required fields. Please include property_id, title, floor_number, number_of_bedrooms, number_of_bathrooms, amenities"})
 
+            # Handle document uploads if purpose is "sell"
+            
+            documents_json = None  # Default to None if no documents are uploaded
+            if purpose == "sell" and "documents" in request.files:
+                documents = request.files.getlist("documents")
+                document_names = []
+
+                for document in documents:
+                    doc_filename = secure_filename(document.filename)
+                    document.save(os.path.join(UPLOAD_FOLDER_DOCS, doc_filename))
+                    document_names.append(doc_filename)  # Save only the filename
+
+                # Convert document names to JSON for storage in the database
+                documents_json = json.dumps(document_names)
+                    
+
+
             # DB connection
             connection = db_connection()
             cursor = connection.cursor()
 
             # Insert data into the database
             sql = """
-                INSERT INTO apartments (apartment_id, user_id, title, description, location, price, purpose, size, floor_number, number_of_bedrooms, number_of_bathrooms, amenities, image)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO apartments (apartment_id, user_id, title, description, location, price, purpose, size, floor_number, number_of_bedrooms, number_of_bathrooms, amenities, image, documents)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
-            values = (apartment_id, user_id, title, description, location, price, purpose, size, floor_number, number_of_bedrooms, number_of_bathrooms, amenities, filename)
+            values = (apartment_id, user_id, title, description, location, price, purpose, size, floor_number, number_of_bedrooms, number_of_bathrooms, amenities, filename, documents_json)
             cursor.execute(sql, values)
             connection.commit()
 
@@ -340,7 +351,6 @@ class AddApartment(Resource):
                 cursor.close()
             if connection:
                 connection.close()
-
 
 
 
@@ -422,7 +432,6 @@ class GetApartment(Resource):
 
 
 
-
 # Add House Route
 class AddHouse(Resource):
     def post(self):
@@ -432,6 +441,9 @@ class AddHouse(Resource):
             # Ensure the images folder exists
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
+            if not os.path.exists(UPLOAD_FOLDER_DOCS):
+                os.makedirs(UPLOAD_FOLDER_DOCS)
+
 
             # Parse form data
             if "image" not in request.files:
@@ -467,6 +479,22 @@ class AddHouse(Resource):
             ]):
                 return jsonify({"message": "Missing required fields. Please include all required fields."})
 
+
+
+            documents_json = None  # Default to None if no documents are uploaded
+            if purpose == "sell" and "documents" in request.files:
+                documents = request.files.getlist("documents")
+                document_names = []
+
+                for document in documents:
+                    doc_filename = secure_filename(document.filename)
+                    document.save(os.path.join(UPLOAD_FOLDER_DOCS, doc_filename))
+                    document_names.append(doc_filename)  # Save only the filename
+
+                # Convert document names to JSON for storage in the database
+                documents_json = json.dumps(document_names)
+    
+
             # DB connection
             connection = db_connection()
             cursor = connection.cursor()
@@ -475,12 +503,12 @@ class AddHouse(Resource):
             sql = """
                 INSERT INTO houses (
                     house_id, user_id, title, description, number_of_bedrooms, number_of_bathrooms, 
-                    amenities, image, location, price, size_in_acres, purpose)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    amenities, image, location, price, size_in_acres, purpose, documents)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 house_id, user_id, title, description, number_of_bedrooms, number_of_bathrooms, 
-                amenities, filename, location, price, size_in_acres, purpose)
+                amenities, filename, location, price, size_in_acres, purpose, documents_json)
 
             cursor.execute(sql, values)
             connection.commit()
@@ -580,53 +608,85 @@ class GetHouse(Resource):
 # Add Land route
 class AddLand(Resource):
     def post(self):
-        # Extract other fields
-        user_id = request.form.get("user_id")
-        title = request.form.get("title")
-        description = request.form.get("description")
-        land_size = request.form.get("land_size")
-        land_type = request.form.get("land_type")
-        location = request.form.get("location")
-        price = request.form.get("price")
-        purpose = request.form.get("purpose")
-        amenities = request.form.get("amenities")
+        connection = None
+        cursor = None
+        try:
+            # Ensure the required folders exist
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            if not os.path.exists(UPLOAD_FOLDER_DOCS):
+                os.makedirs(UPLOAD_FOLDER_DOCS)
 
-        # Generate a unique UUID for land_id
-        land_id = str(uuid.uuid4())
-        
-        # Handle image upload
-        image = request.files.get("image")
-        
-        if image:
-            # Ensure the image is saved to the correct directory
-            image_filename = os.path.join("static/images", image.filename)
-            image.save(image_filename)
-        else:
-            return jsonify({"message": "Missing image file."})
+            # Check for image file
+            if "image" not in request.files:
+                return jsonify({"message": "Image file is required."})
 
-        # Validate required fields
-        if not all([user_id, title, land_size, land_type, location, price]):
-            return jsonify({"message": "Missing required fields. Please include user_id, title, land_size, land_type, location, and price."})
+            image = request.files["image"]
+            # Secure the filename and save the image
+            image_filename = secure_filename(image.filename)
+            image.save(os.path.join(UPLOAD_FOLDER, image_filename))
 
-        # DB connection
-        connection = db_connection()
-        cursor = connection.cursor()
+            # Extract other fields
+            user_id = request.form.get("user_id")
+            title = request.form.get("title")
+            description = request.form.get("description")
+            land_size = request.form.get("land_size")
+            land_type = request.form.get("land_type")
+            location = request.form.get("location")
+            price = request.form.get("price")
+            purpose = request.form.get("purpose")
+            amenities = request.form.get("amenities")
 
-        # Insert data into the database
-        sql = """
-            INSERT INTO land (land_id, user_id, title, description, land_size, land_type, location, price, purpose, amenities, image)
-            VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        values = (land_id,user_id, title, description, land_size, land_type, location, price, purpose, amenities, image.filename)
-        cursor.execute(sql, values)
-        connection.commit()
+            # Generate a unique UUID for land_id
+            land_id = str(uuid.uuid4())
 
-        # Close cursor and connection
-        cursor.close()
-        connection.close()
+            # Validate required fields
+            if not all([user_id, title, land_size, land_type, location, price]):
+                return jsonify({"message": "Missing required fields. Please include user_id, title, land_size, land_type, location, and price."})
 
-        # Response
-        return jsonify({"message": "Land added successfully", "land_id":land_id})
+            # Handle document uploads if purpose is "sell"
+            documents_json = None  # Default to None if no documents are uploaded
+            if purpose == "sell" and "documents" in request.files:
+                documents = request.files.getlist("documents")
+                document_names = []
+
+                for document in documents:
+                    doc_filename = secure_filename(document.filename)
+                    document.save(os.path.join(UPLOAD_FOLDER_DOCS, doc_filename))
+                    document_names.append(doc_filename)  # Save only the filename
+
+                # Convert document names to JSON for storage in the database
+                documents_json = json.dumps(document_names)
+
+            # DB connection
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Insert data into the database
+            sql = """
+                INSERT INTO land (land_id, user_id, title, description, land_size, land_type, location, price, purpose, amenities, image, documents)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (
+                land_id, user_id, title, description, land_size, land_type, location, 
+                price, purpose, amenities, image_filename, documents_json
+            )
+            cursor.execute(sql, values)
+            connection.commit()
+
+            # Response
+            return jsonify({"message": "Land added successfully", "land_id": land_id})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while adding the land", "error": str(e)})
+
+        finally:
+            # Close the DB connection and cursor safely
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
 
 
 # Get land route
@@ -715,59 +775,85 @@ class GetLand(Resource):
 # Add Commercials route
 class AddCommercial(Resource):
     def post(self):
-        # Extract fields from the request
-        user_id = request.form.get("user_id")
-        title = request.form.get("title")
-        description = request.form.get("description")
-        commercial_size = request.form.get("commercial_size")
-        price = request.form.get("price")
-        location = request.form.get("location")
-        purpose = request.form.get("purpose")
-        size = request.form.get("size")
-        commercial_type = request.form.get("commercial_type")
-        amenities = request.form.get("amenities")
-        
-        # Generate a unique UUID for commercial_id
-        commercial_id = str(uuid.uuid4())
+        connection = None
+        cursor = None
+        try:
+            # Ensure the required folders exist
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            if not os.path.exists(UPLOAD_FOLDER_DOCS):
+                os.makedirs(UPLOAD_FOLDER_DOCS)
 
+            # Check for image file
+            if "image" not in request.files:
+                return jsonify({"message": "Image file is required."})
 
-        # Handle image upload
-        image = request.files.get("image")
-      
-        if image:
-            # Save the image to the static/images directory
-            image_filename = os.path.join("static/images", image.filename)
-            image.save(image_filename)
-          
-        else:
-            return jsonify({"message": "Missing image file."})
+            image = request.files["image"]
+            # Secure the filename and save the image
+            image_filename = secure_filename(image.filename)
+            image.save(os.path.join(UPLOAD_FOLDER, image_filename))
 
-        # Validate required fields
-        if not all([user_id, title, commercial_size, price, location, commercial_type, amenities]):
-            return jsonify({"message": "Missing required fields. Please include property_id, title, commercial_size, price, location, parking_space, utilities_available, and commercial_type."})
+            # Extract fields from the request
+            user_id = request.form.get("user_id")
+            title = request.form.get("title")
+            description = request.form.get("description")
+            commercial_size = request.form.get("commercial_size")
+            price = request.form.get("price")
+            location = request.form.get("location")
+            purpose = request.form.get("purpose")
+            size = request.form.get("size")
+            commercial_type = request.form.get("commercial_type")
+            amenities = request.form.get("amenities")
 
-        # DB connection
-        connection = db_connection()
-        cursor = connection.cursor()
+            # Generate a unique UUID for commercial_id
+            commercial_id = str(uuid.uuid4())
 
-        # Insert data into the commercials table
-        sql = """
-            INSERT INTO commercial (
-                commercial_id, user_id, title, description, commercial_size, price, location, purpose, size, commercial_type, amenities, image)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        values = (
-            commercial_id, user_id, title, description, commercial_size, price, location,
-            purpose, size, commercial_type, amenities, image)
+            # Validate required fields
+            if not all([user_id, title, commercial_size, price, location, commercial_type, amenities]):
+                return jsonify({"message": "Missing required fields. Please include user_id, title, commercial_size, price, location, commercial_type, and amenities."})
 
-        cursor.execute(sql, values)
-        connection.commit()
+            # Handle document uploads if purpose is "sell"
+            documents_json = None  # Default to None if no documents are uploaded
+            if purpose == "sell" and "documents" in request.files:
+                documents = request.files.getlist("documents")
+                document_names = []
 
-        # Response
-        cursor.close()
-        connection.close()
+                for document in documents:
+                    doc_filename = secure_filename(document.filename)
+                    document.save(os.path.join(UPLOAD_FOLDER_DOCS, doc_filename))
+                    document_names.append(doc_filename)  # Save only the filename
 
-        return jsonify({"message": "Commercial added successfully", "commercial_id": commercial_id})
+                # Convert document names to JSON for storage in the database
+                documents_json = json.dumps(document_names)
+
+            # DB connection
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Insert data into the database
+            sql = """
+                INSERT INTO commercial (commercial_id, user_id, title, description, commercial_size, price, location, purpose, size, commercial_type, amenities, image, documents)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            values = (
+                commercial_id, user_id, title, description, commercial_size, price, location,
+                purpose, size, commercial_type, amenities, image_filename, documents_json
+            )
+            cursor.execute(sql, values)
+            connection.commit()
+
+            # Response
+            return jsonify({"message": "Commercial added successfully", "commercial_id": commercial_id})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred while adding the commercial", "error": str(e)})
+
+        finally:
+            # Close the DB connection and cursor safely
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
 
 
 
@@ -846,8 +932,6 @@ class GetCommercial(Resource):
             # Close the DB connection if it exists
             if connection:
                 connection.close()
-
-
 
 
 # Add a Service Provider
