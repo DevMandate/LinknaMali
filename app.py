@@ -8,7 +8,6 @@ app = Flask(__name__)
 api = Api(app)
 
 
-
 class ResourcePost(Resource):
     def post(self):
         return jsonify({'response':'Resource Post is Triggered'})
@@ -33,15 +32,5 @@ api.add_resource(ResourcePut, '/put_resource')
 api.add_resource(ResourceDelete, '/delete_resource')
 
 
-
-
-
-
-
-
-
-
-
-
-# app.run(debug=True)
+app.run(debug=True)
 # stops

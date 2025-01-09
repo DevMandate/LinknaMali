@@ -850,43 +850,101 @@ class GetCommercial(Resource):
 
 
 
-# Service requests api
-class ServiceRequest(Resource):
+# Add a Service Provider
+class AddService(Resource):
     def post(self):
+        connection = None
+        cursor = None
         try:
-            # Get the JSON data from the request body
-            data = request.get_json()
+            # Parse request data
+            provider_name = request.form.get("provider_name")
+            location = request.form.get("location")
+            pin_location = request.form.get("pin_location")
+            contact = request.form.get("contact")
+            description = request.form.get("description")
+            category = request.form.get("category")
+            photos = request.files.getlist("photos")
 
-            # Extract the data from the JSON body
-            user_id = data.get('user_id')
-            first_name = data.get('first_name')
-            service_name = data.get('service_name')
-            location = data.get('location')
+            # Generate service_id
+            service_id = str(uuid.uuid4())
 
-            # Check if all required fields are provided
-            if not user_id or not first_name or not service_name or not location:
-                return {"message": "Missing required fields"}, 400
+            # Validate required fields
+            if not all([provider_name, contact, description]):
+                return jsonify({"message": "Required fields are missing."})
 
-            # Connect to the database
+            # Upload photos and save file paths
+            photo_paths = []
+            for photo in photos:
+                filename = secure_filename(photo.filename)
+                photo.save(os.path.join("static/service_photos", filename))
+                photo_paths.append(filename)
+
+            # Database connection
             connection = db_connection()
             cursor = connection.cursor()
 
-            # Insert data into service_requests table
-            insert_query = """
-                INSERT INTO service_requests (user_id, first_name, service_name, location)
-                VALUES (%s, %s, %s, %s)
+            # Insert data into services table
+            sql = """
+                INSERT INTO services (service_id, provider_name, location, pin_location, contact, description, category, photos)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (user_id, first_name, service_name, location))
+            values = (service_id, provider_name, location, pin_location, contact, description, category, json.dumps(photo_paths))
+            cursor.execute(sql, values)
             connection.commit()
 
-            # Close the connection
-            cursor.close()
-            connection.close()
-
-            return {"message": "Service request created successfully"}, 201
+            return jsonify({"message": "Service added successfully", "service_id": service_id})
 
         except Exception as e:
-            return {"message": f"An error occurred: {str(e)}"}, 500
+            return jsonify({"message": "An error occurred while adding the service", "error": str(e)})
+
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
+
+
+# Search service
+class SearchServices(Resource):
+    def get(self):
+        connection = None
+        cursor = None
+        try:
+            query = request.args.get("query", "")
+            if not query:
+                return jsonify({"message": "Search query is required."})
+
+            # Database connection
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # SQL query for search
+            search_query = """
+                SELECT service_id, provider_name, location, contact, description, category, photos
+                FROM services
+                WHERE provider_name LIKE %s OR location LIKE %s OR description LIKE %s OR category LIKE %s
+            """
+            values = [f"%{query}%"] * 4
+
+            cursor.execute(search_query, values)
+            services = cursor.fetchall()
+
+            # Convert result to dictionaries
+            columns = [col[0] for col in cursor.description]
+            result = [dict(zip(columns, service)) for service in services]
+
+            return jsonify({"message": "Search results fetched successfully", "data": result})
+
+        except Exception as e:
+            return jsonify({"message": "An error occurred during the search", "error": str(e)})
+
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
+
 
 
 # New Listings Route
@@ -1016,10 +1074,112 @@ class SearchListings(Resource):
                 connection.close()
 
 
+#Support Tickets
+class SupportTicket(Resource):
+    def post(self):
+        connection = None
+        cursor = None
+        try:
+            # Extract JSON data from the request
+            data = request.get_json()  # Use JSON parsing
+            name = data.get("name")
+            email = data.get("email")
+            subject = data.get("subject")
+            message = data.get("message")
+
+            # Validate required fields
+            if not email or not subject or not message:
+                return {
+                    "message": "Email, subject, and message are required."
+                }, 400
+
+            # Generate a unique ticket ID
+            ticket_id = str(uuid.uuid4())
+
+            # DB connection
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Insert data into the support_tickets table
+            sql = """
+                INSERT INTO support_tickets (ticket_id, name, email, subject, message, status)
+                VALUES (%s, %s, %s, %s, %s, 'Open')
+            """
+            values = (ticket_id, name, email, subject, message)
+            cursor.execute(sql, values)
+            connection.commit()
+
+            # Return success response
+            return {
+                "message": "Support ticket created successfully.",
+                "ticket_id": ticket_id,
+                "status": "Open"
+            }, 201
+
+        except Exception as e:
+            # Return error response
+            return {
+                "message": "An error occurred while creating the support ticket.",
+                "error": str(e)
+            }, 500
+
+        finally:
+            # Safely close cursor and connection
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
 
 
 
+# Admin update tickets
+class UpdateTicketStatus(Resource):
+    def put(self, ticket_id):
+        connection = None
+        cursor = None
+        try:
+            # Parse the request data
+            data = request.get_json()
+            if not data or 'status' not in data:
+                return ({"message": "Status field is required."}), 400
 
+            # Sanitize and validate the status input
+            new_status = data['status'].strip()
+            valid_statuses = ['Open', 'Pending', 'Resolved', 'Closed']
+            if new_status not in valid_statuses:
+                return ({"message": f"Invalid status. Valid statuses are: {', '.join(valid_statuses)}"}), 400
+
+            # Connect to the database
+            connection = db_connection()
+            cursor = connection.cursor()
+
+            # Check if the ticket exists
+            check_query = "SELECT * FROM support_tickets WHERE ticket_id = %s"
+            cursor.execute(check_query, (ticket_id,))
+            ticket = cursor.fetchone()
+            if not ticket:
+                return ({"message": "Ticket not found."}), 404
+
+            # Update the ticket's status
+            update_query = "UPDATE support_tickets SET status = %s WHERE ticket_id = %s"
+            cursor.execute(update_query, (new_status, ticket_id))
+            connection.commit()
+
+            # Log for debugging
+            print(f"Updated status for ticket_id {ticket_id} to '{new_status}'.")
+
+            # Return a success response
+            return ({"message": "Ticket status updated successfully.", "ticket_id": ticket_id, "status": new_status}), 200
+
+        except Exception as e:
+            return ({"message": "An error occurred while updating the ticket status.", "error": str(e)}), 500
+
+        finally:
+            # Close the DB connection and cursor
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
 
 
 
@@ -1039,11 +1199,12 @@ api.add_resource(AddLand, '/addland')
 api.add_resource(GetLand, '/getland')
 api.add_resource(AddCommercial, '/addcommercial')
 api.add_resource(GetCommercial, '/getcommercial')
-api.add_resource(ServiceRequest, '/service-request')
 api.add_resource(NewListings, '/new-listings')
 api.add_resource(SearchListings, '/search-listings')
-
-
+api.add_resource(AddService, '/addservice')
+api.add_resource(SearchServices, '/searchservice')
+api.add_resource(SupportTicket, '/supportticket')
+api.add_resource(UpdateTicketStatus, '/tickets/<string:ticket_id>/status')
 
 
 
