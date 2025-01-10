@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIdCard, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
-const handleRegister = async (formData, setError) => {
+const handleRegister = async (formData, setError, navigate) => {
     try {
         const response = await fetch('http://127.0.0.1:5000/user_register', {
             method: 'POST',
@@ -13,6 +13,7 @@ const handleRegister = async (formData, setError) => {
         const result = await response.json();
         if (response.ok) {
             alert(result.message);
+            navigate('/');
         } else {
             setError(result.error || 'An error occurred during registration.');
         }
@@ -29,13 +30,17 @@ function Register() {
         id_number: '',
         email: '',
         phone_number: '(+254) ',
-        password: '',
+        password1: '',
+        password2: '',
         role: ''
     });
 
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword1, setShowPassword1] = useState(false);
+    const [showPassword2, setShowPassword2] = useState(false);
     const [showIdNumber, setShowIdNumber] = useState(false);
     const [error, setError] = useState('');
+
+    const navigate = useNavigate(); // Use the navigate hook
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -48,11 +53,19 @@ function Register() {
     const handleSubmit = (e) => {
         e.preventDefault();
         setError('');
-        handleRegister(formData, setError);
+        if (formData.password1 !== formData.password2) {
+            setError('Passwords do not match.');
+            return;
+        }
+        handleRegister(formData, setError, navigate); // Pass navigate as an argument
     };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+    const togglePasswordVisibility1 = () => {
+        setShowPassword1(!showPassword1);
+    };
+
+    const togglePasswordVisibility2 = () => {
+        setShowPassword2(!showPassword2);
     };
 
     const toggleIdNumberVisibility = () => {
@@ -149,7 +162,7 @@ function Register() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                        <label htmlFor="password1" className="block text-sm font-medium text-gray-700">
                             Password <span className="text-red-500">*</span>
                         </label>
                         <div className="relative mt-1">
@@ -157,17 +170,40 @@ function Register() {
                                 <FontAwesomeIcon icon={faLock} className="text-gray-400" />
                             </div>
                             <input
-                                id="password"
-                                name="password"
-                                type={showPassword ? "text" : "password"}
+                                id="password1"
+                                name="password1"
+                                type={showPassword1 ? "text" : "password"}
                                 placeholder="Password"
-                                value={formData.password}
+                                value={formData.password1}
                                 onChange={handleChange}
                                 required
                                 className="block w-full pl-10 pr-10 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                             />
-                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={togglePasswordVisibility}>
-                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="text-gray-400" />
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={togglePasswordVisibility1}>
+                                <FontAwesomeIcon icon={showPassword1 ? faEyeSlash : faEye} className="text-gray-400" />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label htmlFor="password2" className="block text-sm font-medium text-gray-700">
+                            Confirm Password <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative mt-1">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <FontAwesomeIcon icon={faLock} className="text-gray-400" />
+                            </div>
+                            <input
+                                id="password2"
+                                name="password2"
+                                type={showPassword2 ? "text" : "password"}
+                                placeholder="Confirm Password"
+                                value={formData.password2}
+                                onChange={handleChange}
+                                required
+                                className="block w-full pl-10 pr-10 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            />
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={togglePasswordVisibility2}>
+                                <FontAwesomeIcon icon={showPassword2 ? faEyeSlash : faEye} className="text-gray-400" />
                             </div>
                         </div>
                     </div>

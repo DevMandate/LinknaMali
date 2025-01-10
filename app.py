@@ -37,5 +37,5 @@ api.add_resource(ResourceDelete, '/delete_resource')
 
 
 
-app.run(debug=True)
+# app.run(debug=True)
 # stops
