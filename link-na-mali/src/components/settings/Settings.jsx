@@ -13,8 +13,8 @@ const SettingsPage = () => {
     switch (activeSection) {
       case "Personal Details":
         return <PersonalDetails />;
-      // case "Customisation Preferences":
-      //   return <CustomisationPreferences />;
+      case "Customisation Preferences":
+        return <CustomisationPreferences />;
       case "Security Settings":
         return <SecuritySettings />;
       case "Payment Methods":
