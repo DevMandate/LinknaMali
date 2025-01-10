@@ -29,7 +29,6 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-<<<<<<< HEAD
 
 # Default Route
 class Default(Resource):
@@ -38,12 +37,6 @@ class Default(Resource):
 
 
 
-=======
-# Default Route
-@app.route('/')
-def home():
-    return 'Welcome to LinkNamali'b
->>>>>>> a91576cab54a4a920a2ce7f759e10e9d15168c67
 
 # 1. USER REGISTER
 class UserRegister(Resource):
