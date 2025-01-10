@@ -5,7 +5,6 @@ import Signup from './components/register'
 import Dashboard from './pages/dashboard'
 import PropertyManagement from './components/property'
 import LeadManagement from './components/lead'
-import ProfileManagement from './components/profile'
 import ReportsAnalytics from './components/analytics'
 import Support from './components/support'
 import Settings from './components/settings'
@@ -19,7 +18,6 @@ function App() {
           <Route path="/" element={<Dashboard />}>
             <Route path="property-management" element={<PropertyManagement />} />
             <Route path="lead-management" element={<LeadManagement />} />
-            <Route path="profile-management" element={<ProfileManagement />} />
             <Route path="reports" element={<ReportsAnalytics />} />
             <Route path="support" element={<Support />} />
             <Route path="settings" element={<Settings />} />
