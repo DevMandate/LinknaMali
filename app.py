@@ -2,9 +2,11 @@ from flask import *
 from flask_restful import Api, Resource
 
 
+
 # starts
 app = Flask(__name__)
 api = Api(app)
+
 
 class ResourcePost(Resource):
     def post(self):
@@ -28,13 +30,6 @@ api.add_resource(ResourcePost, '/post_resource')
 api.add_resource(ResourceGet, '/get_resource')
 api.add_resource(ResourcePut, '/put_resource')
 api.add_resource(ResourceDelete, '/delete_resource')
-
-
-
-
-
-
-
 
 
 # app.run(debug=True)

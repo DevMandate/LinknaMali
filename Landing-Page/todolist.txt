@@ -1,0 +1,3 @@
+Foward nav -> index the sections, uselocation to display or navigate('/')
+If uselocation === null, window.action.reload(), navigate('/')
+If refresh, navigate('/')
