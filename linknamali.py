@@ -14,6 +14,7 @@ import jwt
 import datetime  # For token expiration
 import os
 import uuid
+import re
 
 
 
@@ -42,51 +43,72 @@ class Default(Resource):
 
 
 
-
 # 1. USER REGISTER
 class UserRegister(Resource):
     def post(self):
-        # Step 1: DB Connection and Cursor
-        connection = db_connection()
-        cursor = connection.cursor()
+        try:
+            # Step 1: DB Connection and Cursor
+            connection = db_connection()
+            cursor = connection.cursor()
 
-        # Step 2: Request data
-        data = request.json
-        first_name = data['first_name']
-        last_name = data['last_name']
-        id_number = data['id_number']
-        email = data['email']
-        phone_number = data['phone_number']
-        password1 = data['password1']
-        password2 = data['password2']
-        role = data['role']
+            # Step 2: Request data
+            data = request.json
+            required_fields = ['first_name', 'last_name', 'id_number', 'email', 'phone_number', 'password1', 'password2', 'role']
+            missing_fields = [field for field in required_fields if field not in data]
+            if missing_fields:
+                return {'response': 'Missing required fields', 'fields': missing_fields}, 400
 
-        # Generate a unique UUID for user_id
-        user_id = str(uuid.uuid4())
+            # Extract and validate inputs
+            first_name = data['first_name']
+            last_name = data['last_name']
+            id_number = data['id_number']
+            email = data['email']
+            phone_number = data['phone_number']
+            password1 = data['password1']
+            password2 = data['password2']
+            role = data['role']
 
-        # Hash the password
-        hashed_password = hashpassword(password1)
+            # Validate email and phone number formats
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                return {'response': 'Invalid email format'}, 400
+            if not phone_number.isdigit() or len(phone_number) < 10:
+                return {'response': 'Invalid phone number'}, 400
 
-        # Validate password match and length
-        if password1 != password2:
-            return jsonify({'response': 'Passwords do not match'})
-        elif len(password1) < 6:
-            return jsonify({'response': 'Password length must be more than six'})
+            # Validate password
+            if password1 != password2:
+                return {'response': 'Passwords do not match'}, 400
+            if len(password1) < 6:
+                return {'response': 'Password length must be more than six'}, 400
 
-        # SQL to insert data
-        sql = "INSERT INTO users(user_id, first_name, last_name, id_number, email, phone_number, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        data = (user_id, first_name, last_name, id_number, email, phone_number, hashed_password, role)
+            # Check for duplicate users
+            cursor.execute("SELECT * FROM users WHERE email = %s OR id_number = %s OR phone_number = %s", 
+                           (email, id_number, phone_number))
+            if cursor.fetchone():
+                return {'response': 'User with the same email, ID number, or phone number already exists'}, 400
 
-        # Execute cursor and return response
-        cursor.execute(sql, data)
-        connection.commit()
+            # Generate user_id and hash password
+            user_id = str(uuid.uuid4())
+            hashed_password = hashpassword(password1)
 
-        return jsonify({'response': 'User registered successfully', 'user_id': user_id})
+            # SQL to insert data
+            sql = "INSERT INTO users(user_id, first_name, last_name, id_number, email, phone_number, password, role) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (user_id, first_name, last_name, id_number, email, phone_number, hashed_password, role))
+            connection.commit()
 
+            return {'response': 'User registered successfully', 'user_id': user_id}, 201
+
+        except Exception as e:
+            return {'response': 'An error occurred', 'error': str(e)}, 500
+
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
 
 
 class UserLogin(Resource):
-    def get(self):
+    def post(self):
         # a. DB Connection and Cursor
         connection = db_connection()
         cursor = connection.cursor()
