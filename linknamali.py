@@ -30,6 +30,11 @@ api = Api(app)
 CORS(app)
 
 
+# Allow requests only from the frontend origin
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+
+
+
 # Default Route
 class Default(Resource):
     def get(self):
