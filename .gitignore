@@ -5,8 +5,8 @@ node_modules/
 __pycache__/
 
 # Tailwind and PostCSS artifacts
-*.css.map
-*.css
+# *.css.map
+# *.css
 
 # Build output
 dist/

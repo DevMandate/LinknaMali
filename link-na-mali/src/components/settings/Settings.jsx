@@ -4,7 +4,6 @@ import CustomisationPreferences from "./CustomisationPreferences";
 import SecuritySettings from "./SecuritySettings";
 import PaymentMethods from "./PaymentMethods";
 import Privacy from "./Privacy";
-// import EmailPreferences from "./EmailPreferences";
 
 const SettingsPage = () => {
   const [activeSection, setActiveSection] = useState("Personal Details");
