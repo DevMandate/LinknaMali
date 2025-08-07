@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Send Support Email</title>
+  </head>
+  <body>
+    <form action="/submit" method="post">
+      <label for="email">Email</label>
+      <input type="text" name="email" id="email" />
+      <label for="type">Type</label>
+      <input type="text" name="type" id="type" />
+      <label for="subject"> Subject</label>
+      <input type="subject" name="subject" id="subject" />
+      <label for="message">Message</label>
+      <textarea
+        name="message"
+        id="message"
+        cols="30"
+        rows="10"
+        required
+      ></textarea>
+      <button type="submit">send</button>
+    </form>
+  </body>
+</html>

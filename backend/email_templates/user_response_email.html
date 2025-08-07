@@ -1,0 +1,112 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        font-size: 12px;
+      }
+      .header {
+        background-color: #c1b3af;
+        padding: 20px;
+        text-align: center;
+        color: #29327e;
+      }
+      .logo {
+        width: 120px;
+        margin-bottom: 10px;
+      }
+      .content {
+        padding: 20px;
+        text-align: left;
+        color: #333;
+      }
+      .card {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border-left: 5px solid #004aad;
+      }
+      .footer {
+        text-align: center;
+        padding: 15px;
+        background-color: #29327e;
+        font-size: 14px;
+        color: #ffffff;
+      }
+      .button {
+        display: inline-block;
+        background: #29327e;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-container">
+      <!-- Header with Logo -->
+      <div class="header">
+        <center>
+          <img
+            src="https://linknamali.ke/images/Linknamali.png"
+            alt="LinkNamali Logo"
+            class="logo"
+          />
+        </center>
+        <h2>New Response from {first_name}</h2>
+      </div>
+
+      <!-- Email Content -->
+      <div class="content">
+        <p>Dear Admin,</p>
+        <p>
+          <strong>{first_name}</strong> has responded to
+          <strong>Support Ticket #{ticket_number}</strong>.
+        </p>
+
+        <div class="card">
+          <p><strong>Email:</strong> {user_email}</p>
+          <p><strong>Response:</strong></p>
+          <blockquote>{user_response}</blockquote>
+        </div>
+
+        <!-- Evidence Section (Only displayed if evidence is provided) -->
+        {evidence_url_section}
+
+        <p>Please log in to the system for further details.</p>
+
+        <center>
+          <a
+            href="https://linknamali.ke/login"
+            class="button"
+            style="color: white"
+            >Log in</a
+          >
+        </center>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <center>
+          <p>&copy; 2025 Merime Development | All Rights Reserved.</p>
+        </center>
+      </div>
+    </div>
+  </body>
+</html>

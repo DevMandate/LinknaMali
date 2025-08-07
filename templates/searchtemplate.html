@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Property Search</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      .search-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .search-input {
+        width: 300px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .search-icon {
+        margin-left: 10px;
+        cursor: pointer;
+      }
+
+      .results-container {
+        margin-top: 20px;
+      }
+
+      .result-item {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="search-container">
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="Search by property type or amenity"
+      />
+      
+      <i class="fas fa-search search-icon" id="search-btn"></i>
+    </div>
+    <div class="results-container" id="results-container"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
+
+
+
+<script>
+    document.getElementById("search-btn").addEventListener("click", async () => {
+        const query = document.getElementById("search-input").value.trim();
+
+        if (!query) {
+            alert("Please enter a property type or amenity name to search.");
+            return;
+        }
+
+        const resultsContainer = document.getElementById("results-container");
+        resultsContainer.innerHTML = "Loading...";
+
+        try {
+            let hasResults = false;
+            let hasPropertyTypeResults = false;
+            let hasAmenityResults = false;
+
+            // Check for properties by type
+            const propertyTypeResponse = await fetch('http://127.0.0.1:5000/get_properties_by_type', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ property_type: query })
+            });
+
+            const propertyTypeData = await propertyTypeResponse.json();
+
+            // Check for properties with amenities
+            const amenityResponse = await fetch('http://127.0.0.1:5000/properties/amenity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amenity_name: query })
+            });
+
+            const amenityData = await amenityResponse.json();
+
+            resultsContainer.innerHTML = "";
+
+            // Display properties by type
+            if (propertyTypeResponse.ok && propertyTypeData.properties && propertyTypeData.properties.length > 0) {
+                resultsContainer.innerHTML += `<h3>Properties by Type: ${query}</h3>`;
+                propertyTypeData.properties.forEach(property => {
+                    const item = document.createElement("div");
+                    item.className = "result-item";
+                    item.innerHTML = `
+                        <h4>${property.title}</h4>
+                        <p>${property.description}</p>
+                        <p><strong>Location:</strong> ${property.location}</p>
+                        <p><strong>Price:</strong> ${property.price}</p>
+                    `;
+                    resultsContainer.appendChild(item);
+                });
+                hasPropertyTypeResults = true;
+                hasResults = true;
+            } else if (propertyTypeResponse.ok && propertyTypeData.message) {
+                resultsContainer.innerHTML += `<p>${propertyTypeData.message}</p>`;
+            }
+
+            // Display properties with amenities
+            if (amenityResponse.ok && amenityData.length > 0) {
+                resultsContainer.innerHTML += `<h3>Properties with Amenity: ${query}</h3>`;
+                amenityData.forEach(property => {
+                    const item = document.createElement("div");
+                    item.className = "result-item";
+                    item.innerHTML = `
+                        <h4>${property.title}</h4>
+                        <p>${property.description}</p>
+                        <p><strong>Location:</strong> ${property.location}</p>
+                        <p><strong>Price:</strong> ${property.price}</p>
+                        <p><strong>Amenity:</strong> ${property.amenity_name} (${property.amenity_category})</p>
+                    `;
+                    resultsContainer.appendChild(item);
+                });
+                hasAmenityResults = true;
+                hasResults = true;
+            } else if (amenityResponse.ok && amenityData.message) {
+                resultsContainer.innerHTML += `<p>${amenityData.message}</p>`;
+            }
+
+
+            // Handle no results
+            if (!hasResults) {
+                resultsContainer.innerHTML = `<p>No results found for "${query}".</p>`;
+            }
+
+        } catch (error) {
+            resultsContainer.innerHTML = `<p>Error: ${error.message}</p>`;
+        }
+    });
+</script>

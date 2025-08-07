@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+    .email-container {
+      max-width: 600px; margin: 20px auto; background: #fff; border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-size: 12px;
+    }
+    .header { background-color: #c1b3af; padding: 20px; text-align: center; color: #29327e; }
+    .logo { width: 120px; margin-bottom: 10px; }
+    .content { padding: 20px; color: #333; }
+    .footer { background-color: #29327e; padding: 15px; text-align: center; color: #fff; font-size: 14px; }
+    .button {
+      display: inline-block; background: #29327e; color: white; padding: 10px 20px;
+      text-decoration: none; border-radius: 5px; margin-top: 15px;
+    }
+    .card { background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 5px solid #28a745; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <center>
+        <img src="https://linknamali.ke/images/Linknamali.png" class="logo" alt="LinkNamali Logo" />
+      </center>
+      <h2>Ticket #{{ ticket_number }} Resolved</h2>
+    </div>
+
+    <div class="content">
+      <p>Hi {{ business_name }},</p>
+      <p>Your support ticket <strong>#{{ ticket_number }}</strong> has been  <strong>resolved</strong>.</p>
+
+      <div class="card">
+        <p><strong>Subject:</strong> {{ subject }}</p>
+        <p>Thank you for your patience. Feel free to reachout at any time.</p>
+      </div>
+
+      <center>
+        <a href="{{ support_link }}" class="button">Log In</a>
+      </center>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2025 Merime Development | All Rights Reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

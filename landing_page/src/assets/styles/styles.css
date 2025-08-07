@@ -1,0 +1,102 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    box-sizing: border-box;
+}
+
+input:focus, textarea:focus{
+    outline: none !important;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+ul{
+    list-style: none;
+}
+
+.div{
+    border: 1px solid green;
+}
+.div2{
+    border: 1px solid red;
+}
+
+
+
+/* Profiles display for the service providers  */
+/* Global styles */
+
+/* Profile Card Styles */
+/* styles.css */
+
+.profile-card {
+  max-width: 100%; /* Ensure the card is responsive and takes full width */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  border-radius: 10px; /* Rounded corners */
+  margin-bottom: 2px;
+}
+
+.profile-card:hover {
+  transform: scale(1.05); /* Hover effect */
+}
+
+.profile-card img {
+  border-radius: 10px 10px 0 0; /* Rounded top corners for the image */
+  max-height: 200px;
+}
+
+.profile-card .profile-name {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.profile-card .profile-service {
+  color: gray;
+  margin-bottom: 12px;
+}
+
+.profile-card .profile-description {
+  margin-bottom: 12px;
+}
+
+.profile-card .contact-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.profile-card .contact-buttons button {
+  text-transform: none;
+}
+
+/* Title Styling */
+.service-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 40px;
+  color: #007bff; /* Blue color */
+  font-size: 2rem;
+  margin-top: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* Grid Layout Styles */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px; /* Adjust gap between cards */
+  justify-items: center;
+  margin-top: 5px;
+}
+
+
+

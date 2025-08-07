@@ -1,0 +1,119 @@
+.nav-bar ul {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-item {
+    position: relative;
+    cursor: pointer;
+    color: white;
+}
+
+.nav-item::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background-color: white;
+    transition: width 0.3s ease;
+}
+
+.nav-item:hover::after {
+    width: 100%;
+}
+
+.nav-bar .dropdown {
+    gap: 0rem;
+}
+
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    z-index: 3;
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    white-space: nowrap;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+.rotate-180 {
+    transform-origin: center;
+    transform: rotate(180deg);
+}
+
+@media (max-width: 1260px) {
+    .nav-bar ul {
+        flex-direction: column;
+    }
+
+    .nav-item {
+        max-width: 200px;
+        color: white;
+    }
+
+    .nav-item::after {
+        background-color: white;
+    }
+
+    .nav-item:hover::after {
+        width: 100px;
+    }
+}
+
+.navbar-bg {
+  background-image: url('https://files.linknamali.ke/assets/frontend/others/hero.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-position-y: -80px; /* ✅ Pushes the image up to hide house */
+  height: 100px;
+  color: white;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .navbar-bg {
+    background-position-y: -300px;  
+  }
+}
+
+/* ✅ Ensures solid background and text are visible */
+.navbar-solid {
+    background-color: #516085;
+    color: white;
+}
+
+/* ✅ Make nav items readable inside solid navbar */
+.navbar-solid .nav-item {
+    color: white !important;
+}
+
+.navbar-solid .nav-item::after {
+    background-color: white !important;
+}
+
+/* .navbar-solid::after {
+  content: "";
+  display: block;
+  height: 15px !important;
+  background-color: #f1f1f1 !important;
+  margin-top: -5px !important;
+}
+ */

@@ -1,0 +1,169 @@
+from decimal import Decimal
+from sqlalchemy.orm import relationship, foreign
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, DECIMAL,func, Boolean
+from models.engine.db_engine import Base, get_user_name, get_images, get_documents, get_likes, get_videos
+from utils.review_helper import get_reviews, get_average_rating
+from utils.media_helpers import get_cover_image
+
+
+class House(Base):
+    __tablename__ = 'houses'
+
+    id = Column(String(36), primary_key=True, index=True)
+    user_id = Column(String(36), ForeignKey('users.user_id'), nullable=False)  # ForeignKey to users table
+    house_type = Column(String(100), nullable=False, index=True)
+    title = Column(String(255), nullable=False, index=True)
+    number_of_bedrooms = Column(String(100), nullable=False)
+    number_of_bathrooms = Column(String(100), nullable=False)
+    location = Column(String(255), nullable=False, index=True)
+    town = Column(String(50), nullable=True)
+    locality = Column(String(50), nullable=True)
+    price = Column(DECIMAL(10, 2), nullable=False, index=True)
+    availability_status = Column(String(20), nullable=False)
+    size = Column(String(100), nullable=True)
+    purpose = Column(String(100), nullable=False, index=True)
+    description = Column(String, default=None)
+    amenities = Column(String(100), nullable=False)
+    created_at = Column(DateTime, nullable=False, default=func.now())
+    updated_at = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
+    likes = Column(Integer, default=0)
+    deleted = Column(Boolean, default=False)
+    is_approved = Column(String(20), default="pending")
+    under_review = Column(Boolean, default=False)
+    map_location = Column(String(255), nullable = True)
+    location_text = Column(String(255), nullable=True)
+    display = Column(Boolean, default=1)  # 0 is False, 1 is True
+    verified_by_agent_id = Column(String(36), ForeignKey('listing_agents.agent_id'), nullable=True)
+    project_id = Column(String(36), ForeignKey('projects.id', ondelete="SET NULL"), nullable=True)
+    manually_verified = Column(Integer, default=0)
+    is_cover = Column(Integer, default=0)  
+
+
+
+
+    # New: Short-stay tracking (optional)
+    number_of_units = Column(Integer, nullable=False, default=1)
+    units_remaining = Column(Integer, nullable=True)
+
+
+    # Define relationship with the User table
+    user = relationship("User", back_populates="houses")
+    verified_by_agent = relationship("ListingAgent", back_populates="verified_houses")
+    project = relationship("Project", back_populates="houses")
+    
+    external_calendars = relationship("ExternalCalendar", 
+        primaryjoin="and_(House.id==foreign(ExternalCalendar.property_id), ExternalCalendar.property_type=='houses')")
+
+    blocked_dates = relationship("BlockedDate",
+        primaryjoin="and_(House.id==foreign(BlockedDate.property_id), BlockedDate.property_type=='houses')")
+
+    sync_logs = relationship("SyncLog",
+        primaryjoin="and_(House.id==foreign(SyncLog.property_id), SyncLog.property_type=='houses')")
+    
+    @classmethod
+    def get_active(cls, session, user_id=None):
+        query = session.query(cls).filter(
+            cls.deleted == 0,
+            cls.is_approved == "approved",
+            cls.display == 1
+        )
+        if user_id:
+            query = query.filter(cls.user_id == user_id)
+        return query
+    
+    
+    @classmethod
+    def get_unapproved(cls, session):
+        return session.query(cls).filter(
+            cls.deleted == 0, 
+            cls.is_approved == "pending"
+        )
+    
+    @classmethod
+    def get_approved_and_manually_verified(cls, session):
+        return session.query(cls).filter(
+            cls.deleted == 0,
+            cls.display == 1,
+            cls.is_approved == 'approved',
+            cls.manually_verified == 1
+        )
+
+    @classmethod
+    def get_by_status_for_user(cls, session, user_id, status):
+        query = session.query(cls).filter(
+            cls.user_id == user_id,
+            cls.deleted == 0,
+            cls.is_approved == "approved",
+            cls.display == 1,
+            cls.availability_status == status
+        )
+
+        if status == "vacant":
+            query = query.filter(cls.units_remaining.isnot(None), cls.units_remaining > 0)
+
+        return query
+
+    
+    def as_dict(self, session=None):
+        data = {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
+        for column, value in data.items():
+            if isinstance(value, Decimal):
+                data[column] = float(value)
+
+        if data.get('created_at'):
+            data['created_at'] = data['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+        if data.get('updated_at'):
+            data['updated_at'] = data['updated_at'].strftime('%Y-%m-%d %H:%M:%S')
+
+        if session:
+            data['images'] = get_images(session, self.user_id, self.id, 'houses')
+            data['documents'] = get_documents(session, self.user_id, self.id, 'houses')
+            data['videos'] = get_videos(session, self.user_id, self.id, 'houses')
+            cover_url = get_cover_image(session, self.user_id, self.id, 'houses')
+            data['cover_image_url'] = cover_url or (data['images'][0] if data['images'] else None)
+            data['cover_image'] = data['cover_image_url']
+
+            user_first_name, user_last_name, _ = get_user_name(session, self.user_id)
+            data['user_name'] = f"{user_first_name} {user_last_name}"
+
+            data['reviews'] = [r.as_dict() for r in get_reviews(session, self.id, 'houses')]
+            data['average_rating'] = get_average_rating(session, self.id, 'houses')
+
+            data['likes'] = get_likes(session, self.id)
+
+            price = float(self.price)  
+            if self.purpose == "Short Stay":
+                data['Listed_price'] = f"KSh {price:,.2f} per night"  
+            elif self.purpose == "Rent":
+                data['Listed_price'] = f"Ksh {price:,.2f} per month" 
+            else:
+                data['Listed_price'] = f"KSh {price:,.2f}" 
+        
+
+            # Listing agent info
+            if self.verified_by_agent_id:
+                from models.listing_agents import ListingAgent  
+                agent = session.query(ListingAgent).filter_by(agent_id=self.verified_by_agent_id).first()
+                if agent:
+                    data['verified_by_agent'] = {
+                        'agent_id': agent.agent_id,
+                        'name': agent.name,
+                        'email': agent.email,
+                        'unique_identifier': agent.unique_identifier
+                    }
+
+            # Verification badge logic
+            data['is_verified'] = True if self.verified_by_agent_id or self.manually_verified else False
+
+        else:
+            data['likes'] = 0
+            
+        data['property_type'] = 'houses'
+
+        return data
+
+    
+    @classmethod
+    def get_properties_by_review_status(cls, session, status):
+        return session.query(cls).filter(cls.under_review == status)

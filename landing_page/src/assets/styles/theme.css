@@ -1,0 +1,44 @@
+:root{
+    --color-white: #ffffff;
+    --color-merime: #EDEFF6;
+
+    --dark-Theme: #111111;
+    --light-Theme:var(--color-merime) ;
+    --hamburger-dark: #1a1a1a;
+    --hamburger-light: var(--color-white);
+
+    --Light-gray: #333333;
+    --input-contrast-text: rgba(232, 230, 227, 0.6);
+
+}
+body{
+    transition: background-color 0.5s, color 0.5s;
+}
+
+body[data-theme='light'] {
+    background-color: var(--light-Theme);
+    color: var(--dark-Theme);
+    --background: var(--light-Theme);
+    --text: var(--dark-Theme);
+    --background-invert: var(--dark-Theme);
+    --text-inverter: var(--light-Theme);  
+    --hamburger: var(--hamburger-light);
+    --merime-theme: #29327E;
+
+    --HR: #e5e7eb;
+    --background2: var(--color-white);
+}
+
+body[data-theme='dark']{
+    background-color: var(--dark-Theme);
+    color: var(--light-Theme);
+    --background: var(--dark-Theme);
+    --text: var(--light-Theme);
+    --background-invert: var(--light-Theme);
+    --text-inverter: var(--dark-Theme); 
+    --hamburger: var(--hamburger-dark);
+    --merime-theme: #35BEBD;
+
+    --MUI-input: var(--input-contrast-text);
+    --HR: var(--Light-gray);
+}

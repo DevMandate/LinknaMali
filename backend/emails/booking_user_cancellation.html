@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .header img {
+            height: 80px;
+        }
+        .booking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .booking-table th, .booking-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .booking-table th {
+            background-color: #35BEBD;
+            color: white;
+        }
+        .refund-info {
+            background-color: #e8f7f7;
+            border: 1px solid #35BEBD;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .refund-info h3 {
+            margin-top: 0;
+            color: #35BEBD;
+        }
+        .cta {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #35BEBD;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .status-badge {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="header">
+            <img src="https://files.linknamali.ke/assets/frontend/logo/Linknamali_main.png" alt="Linknamali Logo"/>
+        </div>
+        
+        <span class="status-badge">✓ CANCELLATION CONFIRMED</span>
+        
+        <h2>Hello {{ user_name }},</h2>
+        <p>Your cancellation request for <strong>{{ property_object.title }}</strong> located at <strong>{{ property_object.location }}</strong> has been <strong>approved and processed</strong>.</p>
+
+        <p><strong>Your Booking Details:</strong></p>
+        <table class="booking-table">
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+            {% for key, value in booking.items() %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="refund-info">
+            <h3>💰 Refund Processing Status</h3>
+            {% if refund_info.refund_status == 'processed' or refund_info.payment_initiated %}
+                <p><strong>✅ Status:</strong> Refund has been processed successfully</p>
+                <p><strong>💵 Amount:</strong> KES {{ refund_info.amount }}</p>
+                <p><strong>📱 Payment Method:</strong> Mobile Money (Original payment method)</p>
+                <p><strong>⏰ Timeline:</strong> Refund should reflect in your account within 5-10 minutes</p>
+            {% elif refund_info.refund_status == 'pending' %}
+                <p><strong>⏳ Status:</strong> Refund is currently being processed</p>
+                <p><strong>💵 Amount:</strong> KES {{ refund_info.amount }}</p>
+                <p><strong>⏰ Timeline:</strong> You'll receive your refund within the next 30 minutes</p>
+            {% elif refund_info.refund_status == 'failed' %}
+                <p><strong>⚠️ Status:</strong> Refund processing encountered an issue</p>
+                <p><strong>🛠️ Next Steps:</strong> Our support team will contact you within 2 hours to resolve this manually</p>
+            {% else %}
+                <p><strong>ℹ️ Status:</strong> No refund applicable (Payment was not completed or other terms apply)</p>
+            {% endif %}
+        </div>
+
+        <p>Thank you for using Linknamali responsibly. We understand that plans can change, and we're glad we could process your cancellation smoothly.</p>
+
+        <a href="https://linknamali.ke/search" class="cta">Explore Other Properties</a>
+
+        <p>If you don't receive your refund within the expected timeframe or have any questions, please contact our support team immediately.</p>
+        
+        <p><strong>Contact Support:</strong><br>
+        Email: support@linknamali.ke<br>
+        Phone: +254 XXX XXX XXX<br>
+        WhatsApp: +254 XXX XXX XXX</p>
+
+        <p>We look forward to serving you again on your next booking!</p>
+    </div>
+    <div class="footer">© 2025 Merime Development. All rights reserved.</div>
+</body>
+</html>

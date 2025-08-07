@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 0; margin: 0; }
+      .email-container {
+        background: #ffffff;
+        max-width: 600px;
+        margin: 20px auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        font-size: 13px;
+      }
+      .header {
+        background: #c1b3af;
+        color: #29327e;
+        text-align: center;
+        padding: 20px;
+      }
+      .logo {
+        width: 120px;
+        margin-bottom: 10px;
+      }
+      .content {
+        padding: 20px;
+        color: #333;
+      }
+      .card {
+        background: #f1f1f1;
+        border-left: 4px solid #004aad;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+      .button {
+        background: #29327e;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 20px;
+      }
+      .footer {
+        background: #29327e;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <center>
+          <img src="https://linknamali.ke/images/Linknamali.png" class="logo" alt="LinkNaMali Logo">
+        </center>
+        <h2>Invitation Accepted!</h2>
+      </div>
+      <div class="content">
+        <p>Hello {{ admin_name }},</p>
+        <div class="card">
+          <p><strong>{{ accepted_user_name }}</strong> has accepted your invitation to join <strong>{{ company_name }}</strong>.</p>
+        </div>
+        <center>
+          <a href="{{ dashboard_url }}" class="button">Go to Dashboard</a>
+        </center>
+        <p>Regards,<br>LinknaMali Team</p>
+      </div>
+      <div class="footer">
+        &copy; 2025 Merime Development | All Rights Reserved.
+      </div>
+    </div>
+  </body>
+</html>

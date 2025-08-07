@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .content {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .message {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <img src="https://files.linknamali.ke/assets/frontend/logo/Linknamali_main.png" style="height: 150px;"/>
+        <p class="message">Hello Support,</p>
+        <p class="message">
+            You have received a new message from <strong>{{ user_name }}</strong>.
+        </p>
+        <p class="message">
+            <strong>Email:</strong> {{ email }} <br>
+            <strong>Role:</strong> {{ role }}
+        </p>
+        <p class="message"><strong>Message:</strong></p>
+        <p class="message" style="border-left: 4px solid #35BEBD; padding-left: 10px; font-style: italic;">
+            {{ message }}
+        </p>
+        <p class="message">Please respond accordingly.</p>
+    </div>
+    <div class="footer">© 2025 Merime Development. All rights reserved.</div>
+</body>
+</html>

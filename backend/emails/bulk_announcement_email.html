@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email from LinkNaMali</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Aptos&display=swap');
+
+    body {
+      font-family: 'Aptos', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f4f4;
+      padding: 0;
+      margin: 0;
+      font-size: 12px;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-family: 'Aptos', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .header {
+      background-color: #c1b3af;
+      text-align: center;
+      padding: 20px;
+    }
+    .header img {
+      height: 60px;
+    }
+    .header h2 {
+      margin: 10px 0 0;
+      color: #29327e;
+    }
+    .content {
+      padding: 30px;
+      color: #333;
+      font-size: 12px;
+      font-family: 'Aptos', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .note {
+      background-color: #f1f1f1;
+      border-left: 4px solid #29327e;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+    .footer {
+      background: #29327e;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background:#f4f4f4; font-family:'Aptos', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+  <div class="email-container">
+    <div class="header">
+      <img src="https://linknamali.ke/images/Linknamali.png" alt="Linknamali Logo - Property & Service Platform">
+      <h2>Email from Linknamali</h2>
+    </div>
+    <div class="content">
+      <p>Dear {{ user_name }},</p>
+
+      <div class="note">
+        <strong>{{ note_type }}:</strong>
+        <p>{{ message_body }}</p>
+      </div>
+
+      {% if additional_info %}
+      <p>{{ additional_info }}</p>
+      {% endif %}
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="https://linknamali.ke" target="_blank" style="background-color: #29327e; color: #ffffff; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block; font-family: 'Aptos', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+          Access Linknamali
+        </a>
+      </div>
+
+      <p>If you have any questions, feel free to reply to this email.</p>
+      <p>Best regards,<br>Linknamali</p>
+    </div>
+
+    <div class="footer">
+      &copy; 2025 Merime Development. All rights reserved.
+    </div>
+  </div>
+
+</body>
+</html>

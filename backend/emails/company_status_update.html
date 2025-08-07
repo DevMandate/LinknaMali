@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        font-size: 12px;
+      }
+      .header {
+        background-color: #c1b3af;
+        padding: 20px;
+        text-align: center;
+        color: #29327e;
+      }
+      .logo {
+        width: 120px;
+        margin-bottom: 10px;
+      }
+      .content {
+        padding: 20px;
+        text-align: left;
+        color: #333;
+      }
+      .card {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border-left: 5px solid #004aad;
+      }
+      .footer {
+        text-align: center;
+        padding: 15px;
+        background-color: #29327e;
+        font-size: 14px;
+        color: #ffffff;
+      }
+      .button {
+        display: inline-block;
+        background: #29327e;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-container">
+      <!-- Header with Logo -->
+      <div class="header">
+        <center>
+          <img
+            src="https://linknamali.ke/images/Linknamali.png"
+            alt="LinkNamali Logo"
+            class="logo"
+          />
+        </center>
+        <h2>Company Status Update</h2>
+      </div>
+
+      <!-- Email Content -->
+      <div class="content">
+        <p>Dear {{ user_name }},</p>
+
+        {% if status == "approved" %}
+          <div class="card">
+            <p>Your company <strong>{{ company_name }}</strong> has been <strong style="color:green;">approved</strong>.</p>
+            <p>You can now manage your listings and team via the dashboard.</p>
+            <center>
+              <a href="{{ dashboard_url }}" class="button">Go to Dashboard</a>
+            </center>
+          </div>
+        {% elif status == "rejected" %}
+          <div class="card">
+            <p>Unfortunately, your company <strong>{{ company_name }}</strong> has been <strong style="color:red;">rejected</strong>.</p>
+            <p><strong>Reason:</strong> {{ rejection_reason }}</p>
+          </div>
+        {% endif %}
+
+        <p>Thank you,<br>LinknaMali Team</p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <center>
+          <p>&copy; 2025 Merime Development | All Rights Reserved.</p>
+        </center>
+      </div>
+    </div>
+  </body>
+</html>

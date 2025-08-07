@@ -1,0 +1,13 @@
+.blog-invite {
+    background: var(--hamburger);
+    padding: 20px;
+    border-radius: 2px;
+    text-align: center;
+    margin: 20px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.blog-invite h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}

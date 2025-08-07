@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #29327E;
+  --secondary-color: #35BEBD;
+  --tertiary-color: #8080A0;
+  --quaternary-color: #C1B3AF;
+  --quaternary-color-dark: #A89A95;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  @apply bg-gray-100 text-gray-900;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dark mode styles */
+.dark {
+  @apply bg-gray-900 text-gray-100;
+}
+
+/* Ensure flex container for #app */
+#app {
+  @apply flex flex-col flex-grow;
+}
+
+/* Sidebar background color */
+.sidebar-bg {
+  background-color: var(--primary-color);
+}
+
+/* Input border color on focus */
+.input-border-secondary:focus {
+  border-color: var(--secondary-color);
+}
+
+/* Button background color */
+.button-bg-tertiary {
+  background-color: var(--tertiary-color);
+  color: white;
+}
+
+/* New classes for section colors */
+.bg-primary-color {
+  background-color: var(--primary-color);
+}
+
+.bg-secondary-color {
+  background-color: var(--secondary-color);
+}
+
+.bg-tertiary-color {
+  background-color: var(--tertiary-color);
+}
+
+.bg-quaternary-color {
+  background-color: var(--quaternary-color);
+}
+
+.bg-quaternary-color-dark {
+  background-color: var(--quaternary-color-dark);
+}
+
+/* New class for border color */
+.border-tertiary-color {
+  border-color: var(--tertiary-color);
+}
+
+/* New classes for label and icon colors */
+.label-primary {
+  color: var(--primary-color);
+}
+
+.label-secondary {
+  color: var(--secondary-color);
+}
+
+.label-tertiary {
+  color: var(--tertiary-color);
+}
+
+.label-quaternary {
+  color: var(--quaternary-color-dark);
+}
+
+.icon-primary {
+  color: var(--primary-color);
+}
+
+.icon-secondary {
+  color: var(--secondary-color);
+}
+
+.icon-tertiary {
+  color: var(--tertiary-color);
+}
+
+.icon-quaternary {
+  color: var(--quaternary-color-dark);
+}

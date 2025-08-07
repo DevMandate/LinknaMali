@@ -1,0 +1,19 @@
+/assets/                   
+  ├── frontend/               
+  ├── company/             
+
+/users/                    # User-related uploads
+  ├── {user_id}/           # Each user's folder
+      ├── profile_pic/    # Profile picture
+      ├── documents/       # Any user-uploaded documents
+
+/properties/            
+  ├── apartments/          
+  ├── houses/              
+  ├── land/                
+  ├── commercial/          
+      ├── {user_id}/  
+          ├── {property_id}/
+              ├── image1.jpg
+              ├── image2.jpg
+              ├── image3.jpg

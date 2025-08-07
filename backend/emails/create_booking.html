@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            background: white;
+            border-radius: 0 0 10px 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            background: #35BEBD;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <img src="https://files.linknamali.ke/assets/frontend/logo/Linknamali_main.png" style="height: 150px;"/>
+        <p>Hi {{ user_name }},</p>
+        <p>Your booking was successful. You will be notified when it's confirmed.</p>
+
+        <p><strong>Here are your booking details:</strong></p>
+        <table>
+            <tbody>
+                {% for key, value in booking_details.items() %}
+                <tr>
+                    <th>{{ key }}</th>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ booking_url }}" target="_blank" class="button">View Booking</a>
+        <p>If you have any questions, feel free to <a href="mailto:support@merimedevelopment.co.ke">contact us</a>.</p>
+    </div>
+    <div class="footer">© 2025 Merime Development. All rights reserved.</div>
+</body>
+</html>

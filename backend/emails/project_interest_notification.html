@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .header img {
+            height: 80px;
+        }
+        .contact-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .message-box {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+            border-left: 4px solid #ffc107;
+        }
+        .cta {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #35BEBD;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="header">
+            <img src="https://files.linknamali.ke/assets/frontend/logo/Linknamali_main.png" alt="Linknamali Logo"/>
+        </div>
+        <h2>New Interest in Your Project: {{ project_name }}</h2>
+        <p>Someone has expressed interest in your project and would like to connect with you. Please find their contact details below:</p>
+        
+        <div class="contact-info">
+            <p><strong>Name:</strong> {{ interested_person_name }}</p>
+            <p><strong>Email:</strong> <a href="mailto:{{ interested_person_email }}">{{ interested_person_email }}</a></p>
+            <p><strong>Phone:</strong> <a href="tel:{{ interested_person_phone }}">{{ interested_person_phone }}</a></p>
+            <p><strong>Project:</strong> {{ project_name }}</p>
+            <p><strong>Location:</strong> {{ project_location }}</p>
+            <p><strong>Submitted:</strong> {{ submission_time }}</p>
+        </div>
+        
+        {% if message and message != 'No additional message provided' %}
+        <div class="message-box">
+            <p><strong>Message:</strong></p>
+            <p><em>"{{ message }}"</em></p>
+        </div>
+        {% endif %}
+        
+        <p>We recommend contacting {{ interested_person_name }} within 24-48 hours to maintain their interest and provide any additional information they may require.</p>
+        
+        <a href="https://linknamali.ke/" class="cta">Manage Your Projects</a>
+        
+        <p>Thank you for using Linknamali to showcase your projects. We're here to help you connect with potential buyers.</p>
+    </div>
+    <div class="footer">© 2025 Merime Development. All rights reserved.</div>
+</body>
+</html>

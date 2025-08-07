@@ -1,0 +1,10 @@
+.dropdown-wrapper {
+    position: relative;
+    cursor: pointer;
+}
+
+.dropdown-title {
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
+}

@@ -1,0 +1,1 @@
+export const LoginPortal = "https://portal.linknamali.ke/user-dashboard/";

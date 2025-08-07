@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        font-size: 12px;
+      }
+      .header {
+        background-color: #c1b3af;
+        padding: 20px;
+        text-align: center;
+        color: #29327e;
+      }
+      .logo {
+        width: 120px;
+        margin-bottom: 10px;
+      }
+      .content {
+        padding: 20px;
+        text-align: left;
+        color: #333;
+      }
+      .card {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border-left: 5px solid #ff4b4b;
+      }
+      .footer {
+        text-align: center;
+        padding: 15px;
+        background-color: #29327e;
+        font-size: 14px;
+        color: #ffffff;
+      }
+      .button {
+        display: inline-block;
+        background: #29327e;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <center>
+          <img
+            src="https://linknamali.ke/images/Linknamali.png"
+            style="height: 150px"
+            alt="Merime Devlopment"
+          />
+        </center>
+      </div>
+      <div class="content">
+        <h3>Booking Rejected</h3>
+        <p>Dear {{ first_name }},</p>
+        <p class="card">
+          We regret to inform you that your booking for
+          <strong style="color: #29327e">{{ business_name }}</strong> has been
+          <strong style="color: #29327e">rejected</strong>.
+        </p>
+        <p><strong>Reason:</strong> <em>{{ rejection_reason }}</em></p>
+        <p>
+            You may log in to the system to explore other available service providers.
+        </p>
+        <br />
+        <p>Kind regards,</p>
+        <p><strong>The Linknamali Team</strong></p>
+
+        <center>
+          <a href="{{ booking_url }}" class="button">View Details</a>
+        </center>
+      </div>
+      <div class="footer">
+        <center>
+          <p>&copy; 2025 Merime Development | All Rights Reserved.</p>
+        </center>
+      </div>
+    </div>
+  </body>
+</html>
